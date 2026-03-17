@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>황금노트</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: '#0A0F1C',
+        surface: '#0F172A',
+        card: '#1E293B',
+        border: '#334155',
+        gold: '#D4A853',
+        cyan: '#22D3EE',
+        txt: { primary:'#FFFFFF', secondary:'#94A3B8', muted:'#64748B', dim:'#475569' }
+      },
+      fontFamily: { sans:['Inter','sans-serif'], mono:['JetBrains Mono','monospace'] }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0A0F1C; }
+  .upload-zone { transition: border-color 0.2s; }
+  .upload-zone.dragover { border-color: #D4A853; }
+  .fade-in { animation: fadeIn 0.3s ease-out; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #0F172A; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+</style>
+</head>
+<body class="text-white min-h-screen flex">
+
+<!-- 로그인 화면 -->
+<div id="loginScreen" class="fixed inset-0 z-50 bg-base flex items-center justify-center">
+  <div class="w-[340px] flex flex-col items-center gap-6">
+    <div class="flex items-center gap-2.5">
+      <span class="text-3xl">📒</span>
+      <span class="text-2xl font-bold text-gold">황금노트</span>
+    </div>
+    <p class="text-xs text-txt-muted">비밀번호를 입력하세요</p>
+    <form id="loginForm" class="w-full flex flex-col gap-3" onsubmit="return handleLogin(event)">
+      <input type="password" id="pwInput" placeholder="Password" autocomplete="off"
+        class="w-full bg-card border border-border rounded-md px-4 py-3 text-sm font-mono text-white outline-none focus:border-gold/60 placeholder:text-txt-dim text-center tracking-widest">
+      <p id="loginError" class="hidden text-xs text-red-400 text-center">비밀번호가 틀렸습니다</p>
+      <button type="submit" class="w-full bg-gold hover:bg-gold/90 text-base font-semibold py-2.5 rounded-md text-[13px] transition-colors">로그인</button>
+    </form>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<aside class="w-[220px] bg-surface flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-20 shrink-0">
+  <div class="px-6 pt-6 pb-5 flex items-center gap-2.5">
+    <span class="text-xl">📒</span>
+    <span class="text-base font-bold text-gold">황금노트</span>
+  </div>
+  <nav class="flex-1 px-3">
+    <p class="px-3 pb-2 text-[10px] font-semibold text-txt-dim uppercase tracking-[2px]">MENU</p>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-md bg-card text-[13px] font-medium text-white">
+      <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg>
+      피복비 대상자 선별
+    </a>
+    <div class="flex items-center gap-2.5 px-3 py-2.5 mt-1">
+      <svg class="w-3.5 h-3.5 text-txt-dim" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="text-xs text-txt-dim">메뉴 추가 예정</span>
+    </div>
+  </nav>
+  <div class="px-6 py-4 text-center">
+    <span class="font-mono text-[10px] text-txt-dim">v1.0 · 2026.03</span>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 ml-[220px] flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-surface border-b border-card px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+    <div>
+      <h2 class="text-base font-semibold">피복비 대상자 선별</h2>
+      <p class="text-xs text-txt-muted mt-0.5">직원 데이터 업로드 → 5가지 기준 자동 판정</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-txt-muted">기준년도</span>
+      <select id="baseYear" class="bg-card border border-border rounded-md px-3 py-1.5 text-[13px] font-mono font-semibold text-gold outline-none focus:border-gold/50">
+      </select>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="flex-1 p-8 flex gap-6">
+    <!-- Left: 기준 요약 -->
+    <div class="flex-1 flex flex-col gap-3">
+      <div class="flex items-center gap-1.5 mb-1">
+        <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span class="text-[13px] font-semibold text-gold">제외 기준 요약</span>
+      </div>
+      <div id="criteriaList" class="flex flex-col gap-2"></div>
+    </div>
+
+    <!-- Right: 액션 -->
+    <div class="flex-1 flex flex-col gap-4">
+      <!-- Step 1 -->
+      <div class="bg-card rounded-lg p-5 flex flex-col gap-3">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          <span class="text-[13px] font-semibold text-gold">STEP 1. 템플릿 다운로드</span>
+        </div>
+        <p class="text-xs text-txt-muted leading-relaxed">아래 버튼으로 빈 템플릿을 다운로드한 후 직원 데이터를 입력하세요.</p>
+        <button onclick="downloadTemplate()" class="w-full bg-gold hover:bg-gold/90 text-base font-semibold py-2.5 px-4 rounded-md text-[13px] flex items-center justify-center gap-2 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          템플릿 다운로드 (.xlsx)
+        </button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-card rounded-lg p-5 flex flex-col gap-3">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <span class="text-[13px] font-semibold text-gold">STEP 2. 데이터 업로드</span>
+        </div>
+        <div id="uploadZone" class="upload-zone border border-dashed border-border rounded-lg py-8 flex flex-col items-center gap-2 cursor-pointer hover:border-txt-dim"
+             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+          <svg class="w-8 h-8 text-txt-dim" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          <p class="text-xs text-txt-muted">파일을 드래그하거나 클릭하여 업로드</p>
+          <p class="font-mono text-[10px] text-txt-dim">.xlsx 파일만 지원</p>
+        </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden" onchange="handleFileSelect(event)">
+        <div id="fileInfo" class="hidden p-2.5 bg-surface rounded-md flex items-center justify-between">
+          <span class="text-xs text-txt-secondary" id="fileName"></span>
+          <button onclick="clearFile()" class="text-[10px] text-txt-dim hover:text-red-400 transition-colors">삭제</button>
+        </div>
+      </div>
+
+      <!-- 판정 실행 -->
+      <div id="runSection" class="hidden fade-in">
+        <button onclick="runJudgment()" class="w-full bg-surface border border-border hover:border-cyan/40 py-3 rounded-lg text-sm font-semibold text-cyan flex items-center justify-center gap-2 transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          판정 실행
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 영역 -->
+  <section id="resultSection" class="hidden fade-in px-8 pb-8">
+    <!-- 통계 -->
+    <div class="grid grid-cols-4 gap-3 mb-5">
+      <div class="bg-card rounded-lg p-4 text-center">
+        <p class="text-[10px] text-txt-dim uppercase tracking-wider font-mono">전체</p>
+        <p class="text-2xl font-bold font-mono mt-1" id="statTotal">0</p>
+      </div>
+      <div class="bg-card rounded-lg p-4 text-center">
+        <p class="text-[10px] text-emerald-400 uppercase tracking-wider font-mono">지급</p>
+        <p class="text-2xl font-bold font-mono text-emerald-400 mt-1" id="statPass">0</p>
+      </div>
+      <div class="bg-card rounded-lg p-4 text-center">
+        <p class="text-[10px] text-red-400 uppercase tracking-wider font-mono">제외</p>
+        <p class="text-2xl font-bold font-mono text-red-400 mt-1" id="statFail">0</p>
+      </div>
+      <div class="bg-card rounded-lg p-4 text-center">
+        <p class="text-[10px] text-gold uppercase tracking-wider font-mono">제외율</p>
+        <p class="text-2xl font-bold font-mono text-gold mt-1" id="statRate">0%</p>
+      </div>
+    </div>
+
+    <!-- 제외사유별 -->
+    <div class="bg-card rounded-lg p-4 mb-5">
+      <p class="text-xs font-medium text-txt-secondary mb-3">제외사유별 현황</p>
+      <div class="grid grid-cols-5 gap-2" id="reasonStats"></div>
+    </div>
+
+    <!-- 필터 -->
+    <div class="flex items-center gap-3 mb-3">
+      <div class="flex bg-card rounded-md overflow-hidden text-xs border border-border">
+        <button onclick="filterResult('all')" class="filter-btn px-3.5 py-1.5 transition-colors" data-filter="all">전체</button>
+        <button onclick="filterResult('pass')" class="filter-btn px-3.5 py-1.5 transition-colors" data-filter="pass">지급</button>
+        <button onclick="filterResult('fail')" class="filter-btn px-3.5 py-1.5 transition-colors" data-filter="fail">제외</button>
+      </div>
+      <input type="text" id="searchInput" placeholder="이름 또는 사번 검색..." class="bg-card border border-border rounded-md px-3 py-1.5 text-xs flex-1 max-w-[240px] outline-none focus:border-gold/40 text-txt-secondary placeholder:text-txt-dim" oninput="applyFilters()">
+      <button onclick="downloadResult()" class="ml-auto bg-surface border border-border hover:border-cyan/40 text-cyan text-xs font-medium py-1.5 px-4 rounded-md flex items-center gap-1.5 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        결과 다운로드
+      </button>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="bg-card rounded-lg overflow-hidden border border-border">
+      <div class="overflow-auto max-h-[500px]">
+        <table class="w-full text-xs">
+          <thead>
+            <tr id="resultHeader" class="bg-surface text-txt-dim"></tr>
+          </thead>
+          <tbody id="resultBody" class="divide-y divide-border/40"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const PW_HASH = 'f411d3fbef511ca08d86d58ee4c451885aed63e43171310e7073a99c5081e649';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const pw = document.getElementById('pwInput').value;
+  const hash = await sha256(pw);
+  if (hash === PW_HASH) {
+    sessionStorage.setItem('goldnote_auth','1');
+    document.getElementById('loginScreen').classList.add('hidden');
+  } else {
+    document.getElementById('loginError').classList.remove('hidden');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+  return false;
+}
+
+(function checkAuth() {
+  if (sessionStorage.getItem('goldnote_auth') === '1') {
+    document.getElementById('loginScreen').classList.add('hidden');
+  } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+  }
+})();
+
+let uploadedData = null;
+let resultData = null;
+let currentFilter = 'all';
+
+(function init() {
+  const select = document.getElementById('baseYear');
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear + 1; y >= currentYear - 3; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y + '년';
+    if (y === currentYear) opt.selected = true;
+    select.appendChild(opt);
+  }
+  select.addEventListener('change', updateCriteria);
+  updateCriteria();
+  filterResult('all');
+})();
+
+function updateCriteria() {
+  const year = parseInt(document.getElementById('baseYear').value);
+  const rules = [
+    { n:'①', label:'3개월 미만 근로자', desc:`${year}.12.01 이후 입사자 → 제외`, c:'#F87171' },
+    { n:'②', label:'퇴사자 / 퇴사예정자', desc:`${year}.03.19 이전 퇴사자 → 제외`, c:'#FB923C' },
+    { n:'③', label:'휴직자 / 휴직예정자', desc:`${year}.03.20 이전 휴직시작 → 제외`, c:'#FBBF24' },
+    { n:'④', label:'직원구분 제외', desc:'고문, 자문, 개인사업자, 아르바이트, 도급', c:'#A78BFA' },
+    { n:'⑤', label:'출산→육아 연차소진', desc:'실근무 없을 경우 → 제외', c:'#F472B6' },
+  ];
+  document.getElementById('criteriaList').innerHTML = rules.map(r =>
+    `<div class="flex items-center gap-3 bg-card rounded-md px-3.5 py-2.5">
+      <span class="text-sm font-bold" style="color:${r.c}">${r.n}</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs font-medium text-[#E2E8F0]">${r.label}</p>
+        <p class="font-mono text-[10px] text-txt-muted mt-0.5">${r.desc}</p>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function downloadTemplate() {
+  const headers = ['No','고유사번','사번','성명','파견업체','본/지점','그룹입사일','계약종료일','직원구분','퇴사일','휴직시작일','휴직종료일','휴직사유','출산→육아\n연차소진\n(실근무無)'];
+  const ws = XLSX.utils.aoa_to_sheet([headers]);
+  ws['!cols'] = [{wch:5},{wch:12},{wch:12},{wch:10},{wch:12},{wch:8},{wch:14},{wch:14},{wch:12},{wch:14},{wch:14},{wch:14},{wch:15},{wch:16}];
+  const sample = [1,'0000001','A0000001','홍길동','','본점','2020.03.01','','정규직','','','','',''];
+  XLSX.utils.sheet_add_aoa(ws, [sample], {origin:'A2'});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '직원데이터');
+  XLSX.writeFile(wb, `피복비_업로드_템플릿_${document.getElementById('baseYear').value}.xlsx`);
+}
+
+function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+function handleDragLeave(e) { e.currentTarget.classList.remove('dragover'); }
+function handleDrop(e) { e.preventDefault(); e.currentTarget.classList.remove('dragover'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); }
+function handleFileSelect(e) { if (e.target.files[0]) processFile(e.target.files[0]); }
+
+function processFile(file) {
+  if (!file.name.match(/\.xlsx?$/i)) { alert('xlsx 파일만 업로드 가능합니다.'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type:'array', cellDates:false, raw:true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+      if (raw.length < 2) { alert('데이터가 없습니다.'); return; }
+      const headerRow = raw[0].map(h => String(h).replace(/\n/g,'').trim());
+      const data = [];
+      for (let i = 1; i < raw.length; i++) {
+        const row = raw[i];
+        if (!row || row.every(c => c === '' || c == null)) continue;
+        const obj = {};
+        headerRow.forEach((h, idx) => { obj[h] = row[idx] != null ? String(row[idx]).trim() : ''; });
+        data.push(obj);
+      }
+      uploadedData = data;
+      document.getElementById('fileName').textContent = `${file.name} (${data.length}명)`;
+      document.getElementById('fileInfo').classList.remove('hidden');
+      document.getElementById('runSection').classList.remove('hidden');
+      document.getElementById('resultSection').classList.add('hidden');
+    } catch(err) { alert('파일 읽기 오류: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function clearFile() {
+  uploadedData = null; resultData = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileInfo').classList.add('hidden');
+  document.getElementById('runSection').classList.add('hidden');
+  document.getElementById('resultSection').classList.add('hidden');
+}
+
+function parseDate(val) {
+  if (!val || val === '') return null;
+  const s = String(val).trim();
+  const m = s.match(/^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
+  if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  const num = parseFloat(s);
+  if (!isNaN(num) && num > 30000 && num < 60000) return new Date((num - 25569) * 86400 * 1000);
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function runJudgment() {
+  if (!uploadedData || !uploadedData.length) { alert('업로드된 데이터가 없습니다.'); return; }
+  const year = parseInt(document.getElementById('baseYear').value);
+  const excludedTypes = ['고문','자문','개인사업자','아르바이트','도급'];
+  const cutoffHire = new Date(year, 11, 1);
+  const cutoffResign = new Date(year, 2, 19);
+  const cutoffLeave = new Date(year, 2, 20);
+
+  function findKey(obj, candidates) {
+    for (const k of Object.keys(obj)) {
+      const clean = k.replace(/[\n\r\s]/g,'');
+      for (const c of candidates) { if (clean.includes(c)) return k; }
+    }
+    return null;
+  }
+
+  resultData = uploadedData.map(row => {
+    const kHire = findKey(row, ['그룹입사일','입사일']);
+    const kResign = findKey(row, ['퇴사일']);
+    const kLeaveStart = findKey(row, ['휴직시작일']);
+    const kType = findKey(row, ['직원구분']);
+    const kMaternity = findKey(row, ['출산','연차소진','실근무']);
+    const hireDate = parseDate(row[kHire]);
+    const resignDate = parseDate(row[kResign]);
+    const leaveStartDate = parseDate(row[kLeaveStart]);
+    const empType = row[kType] ? String(row[kType]).trim() : '';
+    const maternityFlag = row[kMaternity] ? String(row[kMaternity]).trim() : '';
+    let reasons = [];
+    let rule1='', rule2='', rule3='', rule4='', rule5='';
+    if (hireDate && hireDate > cutoffHire) { rule1='제외'; reasons.push('①3개월미만'); }
+    if (resignDate && resignDate <= cutoffResign) { rule2='제외'; reasons.push('②퇴사제외'); }
+    if (leaveStartDate && leaveStartDate <= cutoffLeave) { rule3='제외'; reasons.push('③휴직제외'); }
+    if (excludedTypes.includes(empType)) { rule4='제외'; reasons.push('④직원구분제외'); }
+    if (['O','o','Y','y'].includes(maternityFlag)) { rule5='제외'; reasons.push('⑤출산연차제외'); }
+    const excluded = reasons.length > 0;
+    return { ...row, _rule1:rule1, _rule2:rule2, _rule3:rule3, _rule4:rule4, _rule5:rule5, _judgment:excluded?'제외':'지급', _reasons:reasons.join(', '), _excluded:excluded };
+  });
+  displayResults();
+}
+
+function displayResults() {
+  if (!resultData) return;
+  const total = resultData.length;
+  const pass = resultData.filter(r => !r._excluded).length;
+  const fail = total - pass;
+  document.getElementById('statTotal').textContent = total.toLocaleString();
+  document.getElementById('statPass').textContent = pass.toLocaleString();
+  document.getElementById('statFail').textContent = fail.toLocaleString();
+  document.getElementById('statRate').textContent = total > 0 ? (fail/total*100).toFixed(1)+'%' : '0%';
+
+  const rc = {'①3개월미만':0,'②퇴사제외':0,'③휴직제외':0,'④직원구분제외':0,'⑤출산연차제외':0};
+  const rClr = {'①3개월미만':'#F87171','②퇴사제외':'#FB923C','③휴직제외':'#FBBF24','④직원구분제외':'#A78BFA','⑤출산연차제외':'#F472B6'};
+  resultData.forEach(r => { if(r._rule1)rc['①3개월미만']++; if(r._rule2)rc['②퇴사제외']++; if(r._rule3)rc['③휴직제외']++; if(r._rule4)rc['④직원구분제외']++; if(r._rule5)rc['⑤출산연차제외']++; });
+  document.getElementById('reasonStats').innerHTML = Object.entries(rc).map(([k,v]) =>
+    `<div class="bg-surface rounded-md p-2.5 text-center"><p class="text-[10px] font-mono" style="color:${rClr[k]}">${k}</p><p class="text-base font-bold font-mono mt-1" style="color:${rClr[k]}">${v}</p></div>`
+  ).join('');
+
+  const displayCols = ['No','고유사번','사번','성명','본/지점','직원구분','그룹입사일','퇴사일','휴직시작일'];
+  const judgCols = ['①3개월미만','②퇴사제외','③휴직제외','④직원구분제외','⑤출산연차제외','최종판정','제외사유'];
+  document.getElementById('resultHeader').innerHTML =
+    displayCols.map(c => `<th class="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap sticky top-0 bg-surface z-10">${c}</th>`).join('') +
+    judgCols.map(c => `<th class="px-3 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap sticky top-0 bg-surface z-10">${c}</th>`).join('');
+  applyFilters();
+  document.getElementById('resultSection').classList.remove('hidden');
+  document.getElementById('resultSection').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function applyFilters() {
+  if (!resultData) return;
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = resultData;
+  if (currentFilter === 'pass') filtered = filtered.filter(r => !r._excluded);
+  else if (currentFilter === 'fail') filtered = filtered.filter(r => r._excluded);
+  if (search) filtered = filtered.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(search)));
+
+  const sample = resultData[0] || {};
+  const displayCols = ['No','고유사번','사번','성명','본/지점','직원구분','그룹입사일','퇴사일','휴직시작일'];
+  function fk(obj,n) { for(const k of Object.keys(obj)){if(k.replace(/[\n\r\s]/g,'').includes(n.replace(/\s/g,'')))return k;} return n; }
+  const colKeys = displayCols.map(c => fk(sample, c));
+
+  document.getElementById('resultBody').innerHTML = filtered.map(r => {
+    const cells = colKeys.map(k => {
+      let v = r[k]||'';
+      const isType = k && k.includes('직원구분');
+      const excType = ['고문','자문','개인사업자','아르바이트','도급'].includes(v);
+      return `<td class="px-3 py-2 whitespace-nowrap ${isType&&excType?'text-red-400':'text-txt-secondary'}">${v}</td>`;
+    }).join('');
+    const rc = v => v ? '<td class="px-3 py-2 text-center font-mono text-red-400">제외</td>' : '<td class="px-3 py-2 text-center text-txt-dim/30 font-mono">-</td>';
+    const jc = r._excluded
+      ? '<td class="px-3 py-2 text-center"><span class="px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 text-[10px] font-medium">제외</span></td>'
+      : '<td class="px-3 py-2 text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-medium">지급</span></td>';
+    return `<tr class="${r._excluded?'bg-red-950/10':''} hover:bg-white/[0.02] transition-colors">${cells}${rc(r._rule1)}${rc(r._rule2)}${rc(r._rule3)}${rc(r._rule4)}${rc(r._rule5)}${jc}<td class="px-3 py-2 text-[10px] text-txt-dim max-w-[180px] truncate" title="${r._reasons}">${r._reasons}</td></tr>`;
+  }).join('');
+}
+
+function filterResult(type) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const active = btn.dataset.filter === type;
+    btn.className = `filter-btn px-3.5 py-1.5 transition-colors ${active ? 'bg-gold/20 text-gold font-medium' : 'text-txt-dim hover:text-txt-secondary'}`;
+  });
+  applyFilters();
+}
+
+function downloadResult() {
+  if (!resultData) return;
+  const sample = resultData[0];
+  const origKeys = Object.keys(sample).filter(k => !k.startsWith('_'));
+  const headers = [...origKeys,'①3개월미만','②퇴사제외','③휴직제외','④직원구분제외','⑤출산연차제외','최종판정','제외사유'];
+  const rows = [headers];
+  resultData.forEach(r => { const row = origKeys.map(k=>r[k]||''); row.push(r._rule1,r._rule2,r._rule3,r._rule4,r._rule5,r._judgment,r._reasons); rows.push(row); });
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = headers.map(h => ({wch:Math.max(h.length*2,10)}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '피복비 판정결과');
+  XLSX.writeFile(wb, `피복비_판정결과_${document.getElementById('baseYear').value}.xlsx`);
+}
+</script>
+</body>
+</html>
