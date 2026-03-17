@@ -92,13 +92,34 @@ tailwind.config = {
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg>
       피복비 대상자 선별
     </a>
-    <div class="flex items-center gap-2.5 px-3 py-2.5 mt-1">
-      <svg class="w-3.5 h-3.5 text-txt-dim" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      <span class="text-xs text-txt-dim">메뉴 추가 예정</span>
+    <div class="mt-1">
+      <a href="#" onclick="toggleDistMenu();return false" id="distMenuToggle" class="nav-link flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] font-medium text-txt-secondary hover:bg-card/50 transition-colors" data-nav="dist">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        문서 배포
+        <svg id="distChevron" class="w-3 h-3 ml-auto transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+      <div id="distSubMenu" class="hidden ml-5 mt-0.5 flex flex-col gap-0.5 border-l border-border/50 pl-2">
+        <a href="#" onclick="navigateTo('dist-upload');return false" data-nav="dist-upload" class="nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] text-txt-muted hover:bg-card/50 hover:text-txt-secondary transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          파일 업로드
+        </a>
+        <a href="#" onclick="navigateTo('dist-documents');return false" data-nav="dist-documents" class="nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] text-txt-muted hover:bg-card/50 hover:text-txt-secondary transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          문서함
+        </a>
+        <a href="#" onclick="navigateTo('dist-history');return false" data-nav="dist-history" class="nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] text-txt-muted hover:bg-card/50 hover:text-txt-secondary transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          배포 이력
+        </a>
+        <a href="#" onclick="navigateTo('dist-users');return false" data-nav="dist-users" class="nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] text-txt-muted hover:bg-card/50 hover:text-txt-secondary transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          담당자 관리
+        </a>
+      </div>
     </div>
   </nav>
   <div class="px-6 py-4 text-center">
-    <span class="font-mono text-[10px] text-txt-dim">v1.1 · 2026.03</span>
+    <span class="font-mono text-[10px] text-txt-dim">v1.2 · 2026.03</span>
   </div>
 </aside>
 
@@ -350,22 +371,331 @@ tailwind.config = {
     </div>
   </section>
   </div><!-- /page-clothing -->
+
+  <!-- ====== PAGE: DIST-UPLOAD (문서 배포 > 파일 업로드) ====== -->
+  <div id="page-dist-upload" class="page flex-col min-h-screen">
+    <header class="bg-surface border-b border-card px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <h2 class="text-base font-semibold">파일 업로드</h2>
+        <p class="text-xs text-txt-muted mt-0.5">엑셀 파일 업로드 → 계열사 자동 매핑 → 분할 배포</p>
+      </div>
+      <div class="flex items-center gap-1.5 text-[11px] text-txt-dim">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+        <span>로컬 저장소</span>
+      </div>
+    </header>
+    <div class="flex-1 p-8">
+      <!-- 스텝 인디케이터 -->
+      <div class="flex items-center justify-center gap-0 mb-8">
+        <div class="flex items-center gap-2">
+          <div id="distStep1" class="w-7 h-7 rounded-full bg-gold text-base text-[12px] font-bold flex items-center justify-center">1</div>
+          <span class="text-[12px] font-medium text-gold">파일 선택</span>
+        </div>
+        <div class="w-12 h-px bg-border mx-3"></div>
+        <div class="flex items-center gap-2">
+          <div id="distStep2" class="w-7 h-7 rounded-full bg-card border border-border text-txt-dim text-[12px] font-bold flex items-center justify-center">2</div>
+          <span id="distStep2Text" class="text-[12px] font-medium text-txt-dim">매핑 확인</span>
+        </div>
+        <div class="w-12 h-px bg-border mx-3"></div>
+        <div class="flex items-center gap-2">
+          <div id="distStep3" class="w-7 h-7 rounded-full bg-card border border-border text-txt-dim text-[12px] font-bold flex items-center justify-center">3</div>
+          <span id="distStep3Text" class="text-[12px] font-medium text-txt-dim">완료</span>
+        </div>
+      </div>
+
+      <!-- Step 1: 파일 선택 -->
+      <div id="distStepContent1" class="max-w-[560px] mx-auto">
+        <div class="bg-card rounded-lg p-6 flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-medium text-txt-secondary">배포 제목 <span class="text-red-400">*</span></label>
+            <input type="text" id="distTitle" placeholder="예: 2026년 3월 급여" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60 placeholder:text-txt-dim">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-medium text-txt-secondary">카테고리</label>
+            <select id="distCategory" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60">
+              <option value="급여">급여</option>
+              <option value="상여">상여</option>
+              <option value="공문">공문</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-medium text-txt-secondary">엑셀 파일 <span class="text-red-400">*</span></label>
+            <div id="distDropZone" class="upload-zone border border-dashed border-border rounded-lg py-8 flex flex-col items-center gap-2 cursor-pointer hover:border-txt-dim"
+                 ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')"
+                 ondrop="event.preventDefault();this.classList.remove('dragover');distHandleFile(event.dataTransfer.files[0])"
+                 onclick="document.getElementById('distFileInput').click()">
+              <svg class="w-8 h-8 text-txt-dim" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <p class="text-xs text-txt-muted">클릭하거나 파일을 드래그해주세요</p>
+              <p class="font-mono text-[10px] text-txt-dim">.xlsx 파일만 가능 (최대 50MB)</p>
+            </div>
+            <input type="file" id="distFileInput" accept=".xlsx,.xls" class="hidden" onchange="distHandleFile(this.files[0])">
+            <div id="distFileName" class="hidden text-[12px] text-cyan flex items-center gap-2 mt-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="distFileNameText"></span>
+              <button onclick="distClearFile()" class="ml-auto text-txt-dim hover:text-red-400 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+          <button id="distUploadBtn" onclick="distDoUpload()" disabled class="w-full bg-gold hover:bg-gold/90 disabled:bg-card disabled:text-txt-dim disabled:cursor-not-allowed text-base font-semibold py-2.5 rounded-md text-[13px] transition-colors flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            업로드 & 파싱
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: 매핑 확인 -->
+      <div id="distStepContent2" class="hidden max-w-[700px] mx-auto">
+        <div id="distMappingAlert" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-md px-4 py-2.5 mb-4 text-[12px] text-amber-400 flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.27 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <span id="distMappingAlertText"></span>
+        </div>
+        <div id="distRowModeAlert" class="hidden bg-cyan/10 border border-cyan/30 rounded-md px-4 py-2.5 mb-4 text-[12px] text-cyan flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          법인 컬럼이 감지되었습니다. 행 단위로 계열사를 분할합니다.
+        </div>
+        <div class="bg-card rounded-lg overflow-hidden border border-border">
+          <div class="overflow-auto">
+            <table class="w-full text-[12px]">
+              <thead>
+                <tr id="distMappingHeader" class="bg-surface text-txt-dim text-left"></tr>
+              </thead>
+              <tbody id="distMappingBody" class="divide-y divide-border/40"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="flex justify-between mt-5">
+          <button onclick="distGoStep(0)" class="bg-card border border-border hover:border-txt-dim text-txt-secondary text-[12px] font-medium py-2 px-5 rounded-md transition-colors">이전</button>
+          <button id="distConfirmBtn" onclick="distDoConfirm()" class="bg-gold hover:bg-gold/90 text-base font-semibold py-2 px-6 rounded-md text-[13px] transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            배포 실행
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: 완료 -->
+      <div id="distStepContent3" class="hidden max-w-[700px] mx-auto">
+        <div class="bg-card rounded-lg p-8 text-center mb-5">
+          <div class="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-1">배포가 완료되었습니다!</h3>
+          <p id="distCompleteMsg" class="text-sm text-txt-muted"></p>
+        </div>
+        <div id="distValidationSection" class="hidden mb-5">
+          <div class="bg-amber-500/10 border border-amber-500/30 rounded-md px-4 py-2.5 mb-3 text-[12px] text-amber-400 flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.27 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            합계 검증에서 불일치가 발견되었습니다.
+          </div>
+          <div class="bg-card rounded-lg overflow-hidden border border-border">
+            <p class="text-[12px] font-medium text-txt-secondary px-4 py-2.5 bg-surface">합계 검증 결과</p>
+            <table class="w-full text-[12px]">
+              <thead><tr class="bg-surface/50 text-txt-dim text-left"><th class="px-4 py-2">계열사</th><th class="px-4 py-2">항목</th><th class="px-4 py-2 text-right">원본 합계</th><th class="px-4 py-2 text-right">분할 합계</th><th class="px-4 py-2 text-center">결과</th></tr></thead>
+              <tbody id="distValidationBody" class="divide-y divide-border/40"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="bg-card rounded-lg overflow-hidden border border-border mb-5">
+          <p class="text-[12px] font-medium text-txt-secondary px-4 py-2.5 bg-surface">분할된 파일</p>
+          <table class="w-full text-[12px]">
+            <thead><tr class="bg-surface/50 text-txt-dim text-left"><th class="px-4 py-2">계열사</th><th class="px-4 py-2">파일명</th><th class="px-4 py-2 text-right">인원</th></tr></thead>
+            <tbody id="distSplitBody" class="divide-y divide-border/40"></tbody>
+          </table>
+        </div>
+        <div class="text-center">
+          <button onclick="distReset()" class="bg-gold hover:bg-gold/90 text-base font-semibold py-2.5 px-8 rounded-md text-[13px] transition-colors">새 배포하기</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-dist-upload -->
+
+  <!-- ====== PAGE: DIST-DOCUMENTS (문서 배포 > 문서함) ====== -->
+  <div id="page-dist-documents" class="page flex-col min-h-screen">
+    <header class="bg-surface border-b border-card px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <h2 class="text-base font-semibold">문서함</h2>
+        <p class="text-xs text-txt-muted mt-0.5">배포된 문서 목록 · 다운로드</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="docCategoryFilter" onchange="docFetchData()" class="bg-card border border-border rounded-md px-3 py-1.5 text-[12px] text-txt-secondary outline-none focus:border-gold/50">
+          <option value="">전체 카테고리</option>
+          <option value="급여">급여</option><option value="상여">상여</option><option value="공문">공문</option><option value="기타">기타</option>
+        </select>
+        <select id="docTypeFilter" onchange="docFetchData()" class="bg-card border border-border rounded-md px-3 py-1.5 text-[12px] text-txt-secondary outline-none focus:border-gold/50">
+          <option value="">전체 유형</option>
+          <option value="excel">엑셀</option><option value="docx">품의서</option>
+        </select>
+      </div>
+    </header>
+    <div class="flex-1 p-8">
+      <div id="docLoading" class="hidden text-center py-12 text-txt-muted text-sm">불러오는 중...</div>
+      <div id="docEmpty" class="hidden text-center py-12">
+        <svg class="w-12 h-12 text-txt-dim mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        <p class="text-txt-muted text-sm">배포된 문서가 없습니다.</p>
+      </div>
+      <div class="bg-card rounded-lg overflow-hidden border border-border">
+        <div class="overflow-auto">
+          <table class="w-full text-[12px]">
+            <thead>
+              <tr class="bg-surface text-txt-dim text-left">
+                <th class="px-4 py-2.5">배포 제목</th><th class="px-4 py-2.5">카테고리</th><th class="px-4 py-2.5">파일 유형</th><th class="px-4 py-2.5">파일명</th><th class="px-4 py-2.5">배포일</th><th class="px-4 py-2.5 text-center">다운로드</th>
+              </tr>
+            </thead>
+            <tbody id="docTableBody" class="divide-y divide-border/40"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-dist-documents -->
+
+  <!-- ====== PAGE: DIST-HISTORY (문서 배포 > 배포 이력) ====== -->
+  <div id="page-dist-history" class="page flex-col min-h-screen">
+    <header class="bg-surface border-b border-card px-8 py-4 sticky top-0 z-10">
+      <h2 class="text-base font-semibold">배포 이력</h2>
+      <p class="text-xs text-txt-muted mt-0.5">전체 배포 현황 · 계열사별 상태 추적</p>
+    </header>
+    <div class="flex-1 p-8">
+      <div id="histLoading" class="hidden text-center py-12 text-txt-muted text-sm">불러오는 중...</div>
+      <div id="histEmpty" class="hidden text-center py-12">
+        <svg class="w-12 h-12 text-txt-dim mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-txt-muted text-sm">배포 이력이 없습니다.</p>
+      </div>
+      <div id="histList" class="flex flex-col gap-3"></div>
+    </div>
+  </div><!-- /page-dist-history -->
+
+  <!-- ====== PAGE: DIST-USERS (문서 배포 > 담당자 관리) ====== -->
+  <div id="page-dist-users" class="page flex-col min-h-screen">
+    <header class="bg-surface border-b border-card px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <h2 class="text-base font-semibold">계열사 담당자 관리</h2>
+        <p class="text-xs text-txt-muted mt-0.5">계열사별 담당자 등록 · 관리</p>
+      </div>
+      <button onclick="usrOpenModal()" class="bg-gold hover:bg-gold/90 text-base font-semibold py-1.5 px-4 rounded-md text-[12px] flex items-center gap-1.5 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        담당자 추가
+      </button>
+    </header>
+    <div class="flex-1 p-8">
+      <div id="usrUnassigned" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-md px-4 py-2.5 mb-4 text-[12px] text-amber-400 flex items-center gap-2 flex-wrap">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.27 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <span>담당자 미지정 계열사: </span>
+        <span id="usrUnassignedList"></span>
+      </div>
+      <div class="bg-card rounded-lg overflow-hidden border border-border">
+        <div class="overflow-auto">
+          <table class="w-full text-[12px]">
+            <thead>
+              <tr class="bg-surface text-txt-dim text-left">
+                <th class="px-4 py-2.5 w-[90px]">계열사</th><th class="px-4 py-2.5 w-[120px]">담당자</th><th class="px-4 py-2.5">이메일</th><th class="px-4 py-2.5 w-[140px]">전화번호</th><th class="px-4 py-2.5 w-[100px] text-center">관리</th>
+              </tr>
+            </thead>
+            <tbody id="usrTableBody" class="divide-y divide-border/40"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-dist-users -->
+
+  <!-- 담당자 추가/수정 모달 -->
+  <div id="usrModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div class="bg-card border border-border rounded-lg w-[400px] shadow-2xl">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-border">
+        <h3 id="usrModalTitle" class="text-sm font-semibold">담당자 추가</h3>
+        <button onclick="usrCloseModal()" class="text-txt-dim hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <div class="px-5 py-4 flex flex-col gap-3.5">
+        <div class="flex flex-col gap-1">
+          <label class="text-[11px] font-medium text-txt-muted">소속 계열사 <span class="text-red-400">*</span></label>
+          <select id="usrSubsidiaryCode" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60">
+            <option value="">계열사 선택</option>
+            <option value="O">O</option><option value="H">H</option><option value="C">C</option><option value="AC">AC</option><option value="AF">AF</option>
+            <option value="IP">IP</option><option value="AX">AX</option><option value="EX">EX</option><option value="N">N</option><option value="T">T</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[11px] font-medium text-txt-muted">담당자 이름 <span class="text-red-400">*</span></label>
+          <input type="text" id="usrName" placeholder="홍길동" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60 placeholder:text-txt-dim">
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[11px] font-medium text-txt-muted">이메일 <span class="text-red-400">*</span></label>
+          <input type="email" id="usrEmail" placeholder="example@company.com" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60 placeholder:text-txt-dim">
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[11px] font-medium text-txt-muted">전화번호 (선택)</label>
+          <input type="text" id="usrPhone" placeholder="010-0000-0000" class="bg-surface border border-border rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-gold/60 placeholder:text-txt-dim">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 px-5 py-4 border-t border-border">
+        <button onclick="usrCloseModal()" class="bg-surface border border-border text-txt-secondary text-[12px] font-medium py-2 px-4 rounded-md hover:border-txt-dim transition-colors">취소</button>
+        <button onclick="usrSave()" class="bg-gold hover:bg-gold/90 text-base font-semibold py-2 px-5 rounded-md text-[12px] transition-colors">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 삭제 확인 모달 -->
+  <div id="usrDeleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div class="bg-card border border-border rounded-lg w-[340px] shadow-2xl p-5 text-center">
+      <p class="text-sm mb-4">이 담당자를 삭제하시겠습니까?</p>
+      <div class="flex justify-center gap-2">
+        <button onclick="document.getElementById('usrDeleteModal').classList.add('hidden')" class="bg-surface border border-border text-txt-secondary text-[12px] font-medium py-2 px-4 rounded-md">취소</button>
+        <button id="usrDeleteConfirmBtn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-md text-[12px] transition-colors">삭제</button>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <script>
 // ========== NAVIGATION ==========
 let currentPage = 'scheduler';
+const DIST_PAGES = ['dist-upload','dist-documents','dist-history','dist-users'];
+let distMenuOpen = false;
+
+function toggleDistMenu() {
+  distMenuOpen = !distMenuOpen;
+  const sub = document.getElementById('distSubMenu');
+  const chevron = document.getElementById('distChevron');
+  if (distMenuOpen) { sub.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; }
+  else { sub.classList.add('hidden'); chevron.style.transform = ''; }
+}
+
 function navigateTo(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById('page-' + page);
   if (target) { target.classList.add('active'); target.classList.add('fade-in'); setTimeout(()=>target.classList.remove('fade-in'),300); }
+
+  // 문서 배포 하위 페이지면 서브메뉴 열기
+  if (DIST_PAGES.includes(page) && !distMenuOpen) toggleDistMenu();
+
+  // 네비게이션 활성 상태
   document.querySelectorAll('.nav-link').forEach(a => {
-    const isActive = a.dataset.nav === page;
-    a.className = `nav-link flex items-center gap-2.5 px-3 py-2.5 ${a.dataset.nav!=='scheduler'?'mt-1':''} rounded-md text-[13px] font-medium transition-colors ${isActive ? 'bg-card text-white' : 'text-txt-secondary hover:bg-card/50'}`;
-    const svg = a.querySelector('svg');
-    if (svg) svg.style.color = isActive ? '#D4A853' : '';
+    const nav = a.dataset.nav;
+    if (!nav) return;
+    const isDistParent = nav === 'dist' && DIST_PAGES.includes(page);
+    const isActive = nav === page || isDistParent;
+    const isSubNav = DIST_PAGES.includes(nav);
+    if (isSubNav) {
+      a.className = `nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] transition-colors ${nav === page ? 'bg-card/80 text-white' : 'text-txt-muted hover:bg-card/50 hover:text-txt-secondary'}`;
+      const svg = a.querySelector('svg');
+      if (svg) svg.style.color = nav === page ? '#D4A853' : '';
+    } else if (nav === 'dist') {
+      a.className = `nav-link flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors ${isDistParent ? 'bg-card text-white' : 'text-txt-secondary hover:bg-card/50'}`;
+      const svg = a.querySelector('svg:first-child');
+      if (svg) svg.style.color = isDistParent ? '#D4A853' : '';
+    } else {
+      a.className = `nav-link flex items-center gap-2.5 px-3 py-2.5 ${nav!=='scheduler'?'mt-1':''} rounded-md text-[13px] font-medium transition-colors ${isActive ? 'bg-card text-white' : 'text-txt-secondary hover:bg-card/50'}`;
+      const svg = a.querySelector('svg');
+      if (svg) svg.style.color = isActive ? '#D4A853' : '';
+    }
   });
+
+  // 페이지 진입 시 데이터 로드
+  if (page === 'dist-documents') docFetchData();
+  if (page === 'dist-history') histFetchData();
+  if (page === 'dist-users') usrRender();
 }
 
 // ========== SCHEDULER ==========
@@ -1322,6 +1652,666 @@ function downloadResult() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '피복비 판정결과');
   XLSX.writeFile(wb, `피복비_판정결과_${document.getElementById('baseYear').value}.xlsx`);
+}
+
+// ========== 문서 배포 시스템 (완전 독립 · 로컬 전용) ==========
+const SUBSIDIARIES = ['O','H','C','AC','AF','IP','AX','EX','N','T'];
+
+// 계열사 코드 → 별칭 매핑 (자동 매핑용)
+const SUB_ALIASES = {
+  'O':['O','오'], 'H':['H','에이치'], 'C':['C','씨'], 'AC':['AC','에이씨'],
+  'AF':['AF','에이에프'], 'IP':['IP','아이피'], 'AX':['AX','에이엑스'],
+  'EX':['EX','이엑스'], 'N':['N','엔'], 'T':['T','티']
+};
+
+// --- IndexedDB (파일 Blob 저장) ---
+let distDB = null;
+function distOpenDB() {
+  return new Promise((resolve, reject) => {
+    if (distDB) return resolve(distDB);
+    const req = indexedDB.open('kimsecretary_dist', 2);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('files')) db.createObjectStore('files', { keyPath: 'id' });
+    };
+    req.onsuccess = e => { distDB = e.target.result; resolve(distDB); };
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+async function distSaveFile(id, blob) {
+  const db = await distOpenDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').put({ id, blob, savedAt: Date.now() });
+    tx.oncomplete = () => resolve();
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+async function distGetFile(id) {
+  const db = await distOpenDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('files', 'readonly');
+    const req = tx.objectStore('files').get(id);
+    req.onsuccess = () => resolve(req.result?.blob || null);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+// --- localStorage 헬퍼 ---
+function distGetHistory() { return JSON.parse(localStorage.getItem('dist_history') || '[]'); }
+function distSaveHistory(h) { localStorage.setItem('dist_history', JSON.stringify(h)); }
+function distGetUsers() { return JSON.parse(localStorage.getItem('dist_users') || '[]'); }
+function distSaveUsers(u) { localStorage.setItem('dist_users', JSON.stringify(u)); }
+
+// --- 엑셀 파싱: 계열사 자동 감지 ---
+function distParseExcel(workbook) {
+  const mapping = [];
+
+  // 우선순위 1: '법인' 컬럼 감지 → 행 기반 분할
+  const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+  const firstData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+  let headerRowIdx = -1, corpColIdx = -1;
+  const corpKeywords = ['법인','법인코드','법인명','회사','회사코드','회사명','Corp','Company'];
+
+  for (let r = 0; r < Math.min(20, firstData.length); r++) {
+    const row = firstData[r];
+    if (!row) continue;
+    for (let c = 0; c < row.length; c++) {
+      const val = String(row[c] || '').trim();
+      if (corpKeywords.some(kw => val.includes(kw) || val.toUpperCase() === kw.toUpperCase())) {
+        headerRowIdx = r; corpColIdx = c; break;
+      }
+    }
+    if (headerRowIdx >= 0) break;
+  }
+
+  if (headerRowIdx >= 0 && corpColIdx >= 0) {
+    // 행 기반 모드
+    const corpCounts = {};
+    for (let r = headerRowIdx + 1; r < firstData.length; r++) {
+      const row = firstData[r];
+      if (!row || !row[corpColIdx]) continue;
+      const code = String(row[corpColIdx]).trim();
+      if (!code) continue;
+      corpCounts[code] = (corpCounts[code] || 0) + 1;
+    }
+    for (const [code, count] of Object.entries(corpCounts)) {
+      const matched = distMatchSubsidiary(code);
+      mapping.push({
+        splitMode: 'row', sheetName: workbook.SheetNames[0],
+        corporateCode: code, rowCount: count,
+        subsidiaryCode: matched, matched: !!matched,
+        headerRow: headerRowIdx, corporateCol: corpColIdx
+      });
+    }
+    return mapping;
+  }
+
+  // 우선순위 2: 시트 이름 기반 분할
+  for (const name of workbook.SheetNames) {
+    const matched = distMatchSubsidiary(name);
+    mapping.push({
+      splitMode: 'sheet', sheetName: name,
+      subsidiaryCode: matched, matched: !!matched
+    });
+  }
+  return mapping;
+}
+
+function distMatchSubsidiary(text) {
+  const t = text.trim().toUpperCase();
+  for (const [code, aliases] of Object.entries(SUB_ALIASES)) {
+    if (t === code) return code;
+    for (const alias of aliases) {
+      if (t.includes(alias.toUpperCase())) return code;
+    }
+  }
+  // 직접 매칭
+  for (const code of SUBSIDIARIES) {
+    if (t === code || t.startsWith(code + '_') || t.startsWith(code + '-') || t.startsWith(code + ' ')) return code;
+  }
+  return null;
+}
+
+// --- 엑셀 분할 ---
+function distSplitExcel(workbook, mapping, title) {
+  const isRowMode = mapping[0]?.splitMode === 'row';
+  const results = [];
+
+  if (isRowMode) {
+    const sheetName = mapping[0].sheetName;
+    const sheet = workbook.Sheets[sheetName];
+    const allData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    const headerRowIdx = mapping[0].headerRow;
+    const corpColIdx = mapping[0].corporateCol;
+    const headerRows = allData.slice(0, headerRowIdx + 1);
+
+    for (const m of mapping) {
+      if (!m.subsidiaryCode) continue;
+      const rows = [];
+      for (let r = headerRowIdx + 1; r < allData.length; r++) {
+        const row = allData[r];
+        if (row && String(row[corpColIdx] || '').trim() === m.corporateCode) rows.push(row);
+      }
+      const newData = [...headerRows, ...rows];
+      const newWS = XLSX.utils.aoa_to_sheet(newData);
+      // 컬럼 너비 복사
+      if (sheet['!cols']) newWS['!cols'] = sheet['!cols'];
+      const newWB = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(newWB, newWS, sheetName);
+      const fileName = `${title}_${m.subsidiaryCode}.xlsx`;
+      const wbout = XLSX.write(newWB, { bookType: 'xlsx', type: 'array' });
+      results.push({
+        subsidiaryCode: m.subsidiaryCode, fileName,
+        rowCount: rows.length, blob: new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      });
+    }
+  } else {
+    // 시트 기반: 계열사별로 해당 시트들 묶기
+    const codeSheets = {};
+    for (const m of mapping) {
+      if (!m.subsidiaryCode) continue;
+      if (!codeSheets[m.subsidiaryCode]) codeSheets[m.subsidiaryCode] = [];
+      codeSheets[m.subsidiaryCode].push(m.sheetName);
+    }
+    for (const [code, sheets] of Object.entries(codeSheets)) {
+      const newWB = XLSX.utils.book_new();
+      for (const sn of sheets) {
+        const ws = workbook.Sheets[sn];
+        if (ws) XLSX.utils.book_append_sheet(newWB, ws, sn);
+      }
+      const fileName = `${title}_${code}.xlsx`;
+      const wbout = XLSX.write(newWB, { bookType: 'xlsx', type: 'array' });
+      results.push({
+        subsidiaryCode: code, fileName,
+        rowCount: null, blob: new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      });
+    }
+  }
+  return results;
+}
+
+// --- 합계 검증 ---
+function distValidateSums(workbook, mapping, splitResults) {
+  if (mapping[0]?.splitMode !== 'row') return []; // 시트 분할은 검증 생략
+  const sheetName = mapping[0].sheetName;
+  const sheet = workbook.Sheets[sheetName];
+  const allData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+  const headerRowIdx = mapping[0].headerRow;
+  const corpColIdx = mapping[0].corporateCol;
+  const headers = allData[headerRowIdx] || [];
+
+  // 숫자 컬럼 찾기
+  const numCols = [];
+  for (let c = 0; c < headers.length; c++) {
+    if (c === corpColIdx) continue;
+    let numCount = 0;
+    for (let r = headerRowIdx + 1; r < Math.min(headerRowIdx + 20, allData.length); r++) {
+      if (allData[r] && typeof allData[r][c] === 'number') numCount++;
+    }
+    if (numCount >= 2) numCols.push(c);
+  }
+  if (!numCols.length) return [];
+
+  // 원본 합계 (계열사별)
+  const validation = [];
+  for (const m of mapping) {
+    if (!m.subsidiaryCode) continue;
+    for (const col of numCols.slice(0, 5)) { // 주요 5개 컬럼만
+      let origSum = 0;
+      for (let r = headerRowIdx + 1; r < allData.length; r++) {
+        if (allData[r] && String(allData[r][corpColIdx] || '').trim() === m.corporateCode) {
+          origSum += (typeof allData[r][col] === 'number' ? allData[r][col] : 0);
+        }
+      }
+      // 분할 파일 합계
+      const sr = splitResults.find(s => s.subsidiaryCode === m.subsidiaryCode);
+      let splitSum = 0;
+      if (sr) {
+        const splitWB = XLSX.read(sr.blob, { type: 'array' });
+        const splitSheet = splitWB.Sheets[splitWB.SheetNames[0]];
+        const splitData = XLSX.utils.sheet_to_json(splitSheet, { header: 1 });
+        for (let r = headerRowIdx + 1; r < splitData.length; r++) {
+          if (splitData[r]) splitSum += (typeof splitData[r][col] === 'number' ? splitData[r][col] : 0);
+        }
+      }
+      const diff = Math.abs(origSum - splitSum);
+      validation.push({
+        subsidiaryCode: m.subsidiaryCode,
+        fieldName: String(headers[col] || `컬럼${col+1}`),
+        originalSum: Math.round(origSum), splitSum: Math.round(splitSum),
+        diff: Math.round(diff), matched: diff < 1
+      });
+    }
+  }
+  return validation;
+}
+
+// ===== 파일 업로드 UI =====
+let distFile = null;
+let distWorkbook = null;
+let distMapping = [];
+let distCurrentStep = 0;
+let distIsRowMode = false;
+let distSplitResults = [];
+let distValidation = [];
+
+function distHandleFile(f) {
+  if (!f) return;
+  const ext = f.name.split('.').pop().toLowerCase();
+  if (!['xlsx','xls'].includes(ext)) { alert('.xlsx 파일만 업로드 가능합니다.'); return; }
+  distFile = f;
+  document.getElementById('distFileName').classList.remove('hidden');
+  document.getElementById('distFileNameText').textContent = f.name;
+  distUpdateUploadBtn();
+}
+
+function distClearFile() {
+  distFile = null; distWorkbook = null;
+  document.getElementById('distFileName').classList.add('hidden');
+  document.getElementById('distFileInput').value = '';
+  distUpdateUploadBtn();
+}
+
+function distUpdateUploadBtn() {
+  const btn = document.getElementById('distUploadBtn');
+  btn.disabled = !distFile || !document.getElementById('distTitle').value.trim();
+}
+
+document.getElementById('distTitle').addEventListener('input', distUpdateUploadBtn);
+
+async function distDoUpload() {
+  if (!distFile || !document.getElementById('distTitle').value.trim()) return;
+  const btn = document.getElementById('distUploadBtn');
+  btn.disabled = true; btn.textContent = '파싱 중...';
+  try {
+    const data = await distFile.arrayBuffer();
+    distWorkbook = XLSX.read(data, { type: 'array', cellStyles: true });
+    distMapping = distParseExcel(distWorkbook);
+    distIsRowMode = distMapping.length > 0 && distMapping[0]?.splitMode === 'row';
+
+    if (!distMapping.length) { alert('시트나 법인 코드를 찾을 수 없습니다.'); return; }
+    distGoStep(1);
+  } catch (err) {
+    alert('파일 파싱 오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> 업로드 & 파싱';
+    distUpdateUploadBtn();
+  }
+}
+
+function distGoStep(step) {
+  distCurrentStep = step;
+  [1,2,3].forEach(i => {
+    document.getElementById('distStepContent'+i).classList.toggle('hidden', i !== step+1);
+    const circle = document.getElementById('distStep'+i);
+    if (i <= step+1) { circle.className = 'w-7 h-7 rounded-full bg-gold text-base text-[12px] font-bold flex items-center justify-center'; }
+    else { circle.className = 'w-7 h-7 rounded-full bg-card border border-border text-txt-dim text-[12px] font-bold flex items-center justify-center'; }
+  });
+  document.getElementById('distStep2Text').className = `text-[12px] font-medium ${step >= 1 ? 'text-gold' : 'text-txt-dim'}`;
+  document.getElementById('distStep3Text').className = `text-[12px] font-medium ${step >= 2 ? 'text-gold' : 'text-txt-dim'}`;
+  if (step === 1) distRenderMapping();
+  if (step === 2) distRenderComplete();
+}
+
+function distRenderMapping() {
+  const header = document.getElementById('distMappingHeader');
+  const body = document.getElementById('distMappingBody');
+  document.getElementById('distRowModeAlert').classList.toggle('hidden', !distIsRowMode);
+  const hasUnmatched = distMapping.some(m => !m.matched);
+  document.getElementById('distMappingAlert').classList.toggle('hidden', !hasUnmatched);
+  if (hasUnmatched) document.getElementById('distMappingAlertText').textContent = '일부 항목이 자동 매핑되지 않았습니다. 수동으로 계열사를 지정해주세요.';
+
+  header.innerHTML = distIsRowMode
+    ? '<th class="px-4 py-2.5">법인코드</th><th class="px-4 py-2.5 text-right">인원</th><th class="px-4 py-2.5">매핑 계열사</th><th class="px-4 py-2.5">상태</th>'
+    : '<th class="px-4 py-2.5">시트명</th><th class="px-4 py-2.5">매핑 계열사</th><th class="px-4 py-2.5">상태</th>';
+
+  body.innerHTML = distMapping.map((m, idx) => {
+    const key = distIsRowMode ? m.corporateCode : m.sheetName;
+    const mappingCell = m.matched
+      ? `<span class="inline-block bg-emerald-500/15 text-emerald-400 text-[11px] font-medium px-2 py-0.5 rounded">${m.subsidiaryCode}</span>`
+      : `<select onchange="distUpdateMapping(${idx},this.value)" class="bg-surface border border-border rounded px-2 py-1 text-[12px] text-white outline-none focus:border-gold/60">
+           <option value="">선택</option>${SUBSIDIARIES.map(s => `<option value="${s}" ${m.subsidiaryCode===s?'selected':''}>${s}</option>`).join('')}
+         </select>`;
+    const statusCell = m.matched
+      ? '<span class="inline-block bg-emerald-500/15 text-emerald-400 text-[11px] px-2 py-0.5 rounded">자동 매핑</span>'
+      : '<span class="inline-block bg-amber-500/15 text-amber-400 text-[11px] px-2 py-0.5 rounded">수동 지정 필요</span>';
+    const rc = distIsRowMode ? `<td class="px-4 py-2.5 text-right text-txt-secondary">${m.rowCount||0}명</td>` : '';
+    return `<tr class="hover:bg-white/[0.02]"><td class="px-4 py-2.5 text-white font-medium">${key}</td>${rc}<td class="px-4 py-2.5">${mappingCell}</td><td class="px-4 py-2.5">${statusCell}</td></tr>`;
+  }).join('');
+  distUpdateConfirmBtn();
+}
+
+function distUpdateMapping(idx, val) {
+  distMapping[idx].subsidiaryCode = val || null;
+  distMapping[idx].matched = !!val;
+  distRenderMapping();
+}
+
+function distUpdateConfirmBtn() {
+  document.getElementById('distConfirmBtn').disabled = distMapping.some(m => !m.subsidiaryCode);
+}
+
+async function distDoConfirm() {
+  const btn = document.getElementById('distConfirmBtn');
+  btn.disabled = true; btn.textContent = '분할 처리 중...';
+  try {
+    const title = document.getElementById('distTitle').value.trim();
+    const category = document.getElementById('distCategory').value;
+
+    // 분할 실행
+    distSplitResults = distSplitExcel(distWorkbook, distMapping, title);
+
+    // 합계 검증
+    distValidation = [];
+    try { distValidation = distValidateSums(distWorkbook, distMapping, distSplitResults); } catch(e) { console.warn('검증 오류:', e); }
+
+    // IndexedDB에 분할 파일 저장
+    const uploadId = Date.now();
+    const distributions = [];
+    for (const sr of distSplitResults) {
+      const fileId = `${uploadId}_${sr.subsidiaryCode}`;
+      await distSaveFile(fileId, sr.blob);
+      distributions.push({
+        id: fileId, subsidiaryCode: sr.subsidiaryCode,
+        fileName: sr.fileName, rowCount: sr.rowCount,
+        fileType: 'excel', downloadedAt: null
+      });
+    }
+
+    // 이력 저장
+    const history = distGetHistory();
+    history.unshift({
+      id: uploadId, title, category,
+      originalFileName: distFile.name,
+      date: new Date().toISOString(),
+      status: 'completed',
+      distributions,
+      validation: distValidation
+    });
+    distSaveHistory(history);
+
+    distGoStep(2);
+  } catch (err) {
+    alert('분할 오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> 배포 실행';
+  }
+}
+
+function distRenderComplete() {
+  document.getElementById('distCompleteMsg').textContent = `${distSplitResults.length}개 계열사에 파일이 분할 배포되었습니다.`;
+
+  // 검증 결과
+  const hasWarning = distValidation.some(v => !v.matched);
+  const valSection = document.getElementById('distValidationSection');
+  if (hasWarning && distValidation.length) {
+    valSection.classList.remove('hidden');
+    document.getElementById('distValidationBody').innerHTML = distValidation.map(v =>
+      `<tr><td class="px-4 py-2 text-white">${v.subsidiaryCode}</td><td class="px-4 py-2 text-txt-secondary">${v.fieldName}</td>
+       <td class="px-4 py-2 text-right font-mono text-txt-secondary">${v.originalSum?.toLocaleString()}</td>
+       <td class="px-4 py-2 text-right font-mono text-txt-secondary">${v.splitSum?.toLocaleString()}</td>
+       <td class="px-4 py-2 text-center">${v.matched ? '<span class="text-emerald-400 text-[11px]">일치</span>' : '<span class="text-red-400 text-[11px]">불일치</span>'}</td></tr>`
+    ).join('');
+  } else { valSection.classList.add('hidden'); }
+
+  // 분할 파일 (즉시 다운로드 가능)
+  document.getElementById('distSplitBody').innerHTML = distSplitResults.map((s, i) =>
+    `<tr class="hover:bg-white/[0.02]">
+      <td class="px-4 py-2 text-white font-medium">${s.subsidiaryCode}</td>
+      <td class="px-4 py-2 text-txt-secondary">${s.fileName}</td>
+      <td class="px-4 py-2 text-right font-mono text-txt-secondary">${s.rowCount ? s.rowCount+'명' : '-'}</td>
+    </tr>`
+  ).join('') +
+  `<tr><td colspan="3" class="px-4 py-3 text-center">
+    <button onclick="distDownloadAll()" class="bg-cyan/10 hover:bg-cyan/20 text-cyan text-[12px] font-medium px-4 py-1.5 rounded transition-colors inline-flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      전체 다운로드 (${distSplitResults.length}개 파일)
+    </button>
+  </td></tr>`;
+}
+
+function distDownloadAll() {
+  distSplitResults.forEach((sr, i) => {
+    setTimeout(() => {
+      const url = URL.createObjectURL(sr.blob);
+      const a = document.createElement('a'); a.href = url; a.download = sr.fileName; a.click();
+      URL.revokeObjectURL(url);
+    }, i * 300);
+  });
+}
+
+function distReset() {
+  distFile = null; distWorkbook = null; distMapping = []; distSplitResults = []; distValidation = [];
+  distCurrentStep = 0;
+  document.getElementById('distTitle').value = '';
+  document.getElementById('distCategory').value = '급여';
+  document.getElementById('distFileName').classList.add('hidden');
+  document.getElementById('distFileInput').value = '';
+  distGoStep(0);
+  distUpdateUploadBtn();
+}
+
+// ===== 문서함 =====
+function docFetchData() {
+  const body = document.getElementById('docTableBody');
+  const empty = document.getElementById('docEmpty');
+  const loading = document.getElementById('docLoading');
+  loading.classList.add('hidden'); empty.classList.add('hidden');
+
+  const cat = document.getElementById('docCategoryFilter').value;
+  const typ = document.getElementById('docTypeFilter').value;
+  const history = distGetHistory();
+
+  // 모든 배포 건에서 개별 파일 플랫하게 추출
+  let allDocs = [];
+  for (const h of history) {
+    for (const d of (h.distributions || [])) {
+      allDocs.push({ ...d, title: h.title, category: h.category, date: h.date, uploadId: h.id });
+    }
+  }
+  if (cat) allDocs = allDocs.filter(d => d.category === cat);
+  if (typ) allDocs = allDocs.filter(d => d.fileType === typ);
+
+  if (!allDocs.length) { empty.classList.remove('hidden'); body.innerHTML = ''; return; }
+
+  body.innerHTML = allDocs.map(d => {
+    const typeTag = '<span class="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-400 text-[11px] px-2 py-0.5 rounded"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>엑셀</span>';
+    const dlMark = d.downloadedAt ? '<span class="text-txt-dim text-[10px] ml-1">받음</span>' : '';
+    return `<tr class="hover:bg-white/[0.02]">
+      <td class="px-4 py-2.5 text-white">${d.title}</td>
+      <td class="px-4 py-2.5"><span class="bg-card border border-border text-txt-secondary text-[11px] px-2 py-0.5 rounded">${d.category}</span></td>
+      <td class="px-4 py-2.5">${typeTag}</td>
+      <td class="px-4 py-2.5 text-txt-secondary font-mono text-[11px]">${d.fileName}</td>
+      <td class="px-4 py-2.5 text-txt-muted">${new Date(d.date).toLocaleDateString('ko-KR')}</td>
+      <td class="px-4 py-2.5 text-center">
+        <button onclick="docDownload('${d.id}','${d.fileName.replace(/'/g,"\\'")}')" class="bg-gold/10 hover:bg-gold/20 text-gold text-[11px] font-medium px-3 py-1 rounded transition-colors inline-flex items-center gap-1 mx-auto">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          다운로드${dlMark}
+        </button>
+      </td></tr>`;
+  }).join('');
+}
+
+async function docDownload(fileId, filename) {
+  try {
+    const blob = await distGetFile(fileId);
+    if (!blob) { alert('파일이 만료되었습니다. 다시 업로드해주세요.'); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    // 다운로드 기록
+    const history = distGetHistory();
+    for (const h of history) {
+      const d = (h.distributions||[]).find(d => d.id === fileId);
+      if (d) { d.downloadedAt = new Date().toISOString(); break; }
+    }
+    distSaveHistory(history);
+    docFetchData();
+  } catch (err) { alert('다운로드 실패: ' + err.message); }
+}
+
+// ===== 배포 이력 =====
+const HIST_STATUS = {
+  completed: { color: 'bg-emerald-500/15 text-emerald-400', text: '완료' }
+};
+
+function histFetchData() {
+  const list = document.getElementById('histList');
+  const loading = document.getElementById('histLoading');
+  const empty = document.getElementById('histEmpty');
+  loading.classList.add('hidden'); empty.classList.add('hidden'); list.innerHTML = '';
+
+  const history = distGetHistory();
+  if (!history.length) { empty.classList.remove('hidden'); return; }
+
+  list.innerHTML = history.map(u => {
+    const st = HIST_STATUS[u.status] || { color: 'bg-card text-txt-dim', text: u.status };
+    const codes = [...new Set((u.distributions||[]).map(d => d.subsidiaryCode))];
+    const total = u.distributions?.length || 0;
+    const downloaded = (u.distributions||[]).filter(d => d.downloadedAt).length;
+
+    const distDetail = (u.distributions||[]).map(d => {
+      const dlStatus = d.downloadedAt
+        ? `<span class="bg-emerald-500/15 text-emerald-400 text-[10px] px-1.5 py-0.5 rounded">받음 (${new Date(d.downloadedAt).toLocaleDateString('ko-KR')})</span>`
+        : `<button onclick="docDownload('${d.id}','${d.fileName.replace(/'/g,"\\'")}')" class="bg-gold/10 hover:bg-gold/20 text-gold text-[10px] px-2 py-0.5 rounded cursor-pointer transition-colors">다운로드</button>`;
+      return `<tr class="text-[11px]"><td class="px-3 py-1.5 text-white">${d.subsidiaryCode}</td><td class="px-3 py-1.5 text-txt-secondary">엑셀</td><td class="px-3 py-1.5 text-txt-muted font-mono">${d.fileName}</td><td class="px-3 py-1.5">${dlStatus}</td></tr>`;
+    }).join('');
+
+    return `<div class="bg-card rounded-lg border border-border overflow-hidden">
+      <div class="px-5 py-3.5 flex items-center gap-4 cursor-pointer hover:bg-white/[0.02] transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.hist-chevron').classList.toggle('rotate-180')">
+        <div class="flex-1 min-w-0">
+          <span class="text-[13px] font-medium text-white">${u.title}</span>
+          <span class="ml-2 bg-card border border-border text-txt-muted text-[10px] px-2 py-0.5 rounded">${u.category}</span>
+        </div>
+        <span class="text-[11px] ${st.color} px-2 py-0.5 rounded shrink-0">${st.text}</span>
+        <div class="flex gap-1 shrink-0">${codes.map(c => `<span class="bg-surface text-txt-secondary text-[10px] px-1.5 py-0.5 rounded">${c}</span>`).join('')}</div>
+        <span class="text-[11px] text-txt-muted font-mono shrink-0">${downloaded}/${total}</span>
+        <span class="text-[11px] text-txt-dim shrink-0">${new Date(u.date).toLocaleString('ko-KR')}</span>
+        <svg class="hist-chevron w-3.5 h-3.5 text-txt-dim transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="hidden border-t border-border">
+        <div class="px-5 py-2 flex justify-end">
+          <button onclick="histDelete(${u.id})" class="text-red-400/60 hover:text-red-400 text-[10px] transition-colors">이력 삭제</button>
+        </div>
+        <table class="w-full"><thead><tr class="bg-surface/50 text-txt-dim text-[10px] text-left"><th class="px-3 py-1.5">계열사</th><th class="px-3 py-1.5">파일유형</th><th class="px-3 py-1.5">파일명</th><th class="px-3 py-1.5">다운로드</th></tr></thead>
+        <tbody class="divide-y divide-border/30">${distDetail}</tbody></table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function histDelete(id) {
+  if (!confirm('이 배포 이력을 삭제하시겠습니까?')) return;
+  const history = distGetHistory().filter(h => h.id !== id);
+  distSaveHistory(history);
+  histFetchData();
+}
+
+// ===== 담당자 관리 =====
+let usrEditingId = null;
+
+function usrRender() {
+  const users = distGetUsers();
+  // 미지정 계열사
+  const viewers = users.filter(u => u.role !== 'admin');
+  const assigned = new Set(viewers.map(u => u.subsidiaryCode));
+  const unassigned = SUBSIDIARIES.filter(s => !assigned.has(s));
+  const unEl = document.getElementById('usrUnassigned');
+  if (unassigned.length) {
+    unEl.classList.remove('hidden');
+    document.getElementById('usrUnassignedList').innerHTML = unassigned.map(c =>
+      `<span class="bg-amber-500/20 text-amber-300 text-[11px] px-1.5 py-0.5 rounded ml-1">${c}</span>`
+    ).join('');
+  } else { unEl.classList.add('hidden'); }
+
+  const body = document.getElementById('usrTableBody');
+  if (!users.length) {
+    body.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-txt-muted text-sm">등록된 담당자가 없습니다.</td></tr>';
+    return;
+  }
+  body.innerHTML = users.map(u => {
+    const subTag = u.subsidiaryCode ? `<span class="bg-blue-500/15 text-blue-400 text-[11px] px-2 py-0.5 rounded">${u.subsidiaryCode}</span>` : '-';
+    return `<tr class="hover:bg-white/[0.02]">
+      <td class="px-4 py-2.5">${subTag}</td>
+      <td class="px-4 py-2.5 text-white">${u.name}</td>
+      <td class="px-4 py-2.5 text-txt-secondary text-[11px]">${u.email}</td>
+      <td class="px-4 py-2.5 text-txt-muted">${u.phone || '-'}</td>
+      <td class="px-4 py-2.5 text-center">
+        <div class="flex items-center justify-center gap-1.5">
+          <button onclick="usrEdit(${u.id})" class="bg-card border border-border hover:border-cyan/40 text-cyan text-[11px] px-2 py-1 rounded transition-colors" title="수정">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </button>
+          <button onclick="usrConfirmDelete(${u.id})" class="bg-card border border-border hover:border-red-400/40 text-red-400 text-[11px] px-2 py-1 rounded transition-colors" title="삭제">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      </td></tr>`;
+  }).join('');
+}
+
+function usrOpenModal(editId) {
+  usrEditingId = editId || null;
+  document.getElementById('usrModalTitle').textContent = usrEditingId ? '담당자 수정' : '담당자 추가';
+  if (usrEditingId) {
+    const u = distGetUsers().find(u => u.id === usrEditingId);
+    if (u) {
+      document.getElementById('usrSubsidiaryCode').value = u.subsidiaryCode || '';
+      document.getElementById('usrName').value = u.name;
+      document.getElementById('usrEmail').value = u.email;
+      document.getElementById('usrEmail').disabled = true;
+      document.getElementById('usrPhone').value = u.phone || '';
+    }
+  } else {
+    document.getElementById('usrSubsidiaryCode').value = '';
+    document.getElementById('usrName').value = '';
+    document.getElementById('usrEmail').value = '';
+    document.getElementById('usrEmail').disabled = false;
+    document.getElementById('usrPhone').value = '';
+  }
+  document.getElementById('usrModal').classList.remove('hidden');
+}
+
+function usrCloseModal() {
+  document.getElementById('usrModal').classList.add('hidden');
+  usrEditingId = null;
+}
+
+function usrEdit(id) { usrOpenModal(id); }
+
+function usrSave() {
+  const sub = document.getElementById('usrSubsidiaryCode').value;
+  const name = document.getElementById('usrName').value.trim();
+  const email = document.getElementById('usrEmail').value.trim();
+  const phone = document.getElementById('usrPhone').value.trim();
+  if (!sub || !name || !email) { alert('계열사, 이름, 이메일은 필수입니다.'); return; }
+
+  const users = distGetUsers();
+  if (usrEditingId) {
+    const idx = users.findIndex(u => u.id === usrEditingId);
+    if (idx >= 0) { users[idx] = { ...users[idx], name, phone, subsidiaryCode: sub }; }
+  } else {
+    if (users.some(u => u.email === email)) { alert('이미 등록된 이메일입니다.'); return; }
+    users.push({ id: Date.now(), name, email, phone, subsidiaryCode: sub, role: 'viewer', createdAt: new Date().toISOString() });
+  }
+  distSaveUsers(users);
+  usrCloseModal();
+  usrRender();
+}
+
+function usrConfirmDelete(id) {
+  const modal = document.getElementById('usrDeleteModal');
+  modal.classList.remove('hidden');
+  document.getElementById('usrDeleteConfirmBtn').onclick = () => {
+    const users = distGetUsers().filter(u => u.id !== id);
+    distSaveUsers(users);
+    modal.classList.add('hidden');
+    usrRender();
+  };
 }
 </script>
 </body>
