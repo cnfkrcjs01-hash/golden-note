@@ -19,13 +19,13 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        base: '#F5F6FA',
-        surface: '#FFFFFF',
+        base: '#F5F1EB',
+        surface: '#FFFCF9',
         card: '#FFFFFF',
-        border: '#E5E7EB',
-        gold: '#F26522',
-        cyan: '#2B4C7E',
-        txt: { primary:'#1E293B', secondary:'#3D4F6F', muted:'#5A6F8E', dim:'#8896AB' }
+        border: '#E8E0D8',
+        gold: '#C96442',
+        cyan: '#6B5B4E',
+        txt: { primary:'#1A1816', secondary:'#4A4540', muted:'#7A746D', dim:'#A69E96' }
       },
       fontFamily: { sans:['Noto Sans KR','sans-serif'], mono:['JetBrains Mono','monospace'] }
     }
@@ -33,30 +33,54 @@ tailwind.config = {
 }
 </script>
 <style>
-  body { font-family: 'Noto Sans KR', sans-serif; background: #F5F6FA; color: #1E293B !important; }
-  h2, h3, h4 { color: #1E293B !important; }
-  .text-txt-primary { color: #1E293B !important; }
-  .text-txt-secondary { color: #3D4F6F !important; }
-  .text-txt-muted { color: #5A6F8E !important; }
-  .text-txt-dim { color: #8896AB !important; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #F5F1EB; color: #1A1816 !important; }
+
+  /* 로그인 전구 애니메이션 */
+  .login-bulb { opacity:0; transform:scale(0.7) translateY(10px); }
+  .login-bulb.animate { animation: lbAppear 0.6s ease-out forwards; }
+  .lb-body { fill:none; stroke:#B8A99A; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:200; stroke-dashoffset:200; }
+  .login-bulb.animate .lb-body { animation: lbDraw 0.8s ease-out 0.2s forwards; }
+  .login-bulb.lit .lb-body { stroke:#C96442; animation: lbDraw 0.8s ease-out 0.2s forwards; }
+  .lb-filament { fill:none; stroke:#C96442; stroke-width:2; stroke-linecap:round; stroke-dasharray:50; stroke-dashoffset:50; opacity:0; }
+  .login-bulb.lit .lb-filament { animation: lbFilament 0.4s ease-out 0.6s forwards; }
+  .lb-glow { opacity:0; }
+  .login-bulb.lit .lb-glow { animation: lbGlowOn 0.6s ease-out 0.8s forwards; }
+  .lb-rays { opacity:0; }
+  .lb-rays line { stroke:#C96442; stroke-width:1.5; stroke-linecap:round; stroke-dasharray:8; stroke-dashoffset:8; }
+  .login-bulb.lit .lb-rays { animation: lbFadeIn 0.3s ease-out 0.9s forwards; }
+  .login-bulb.lit .lb-rays line { animation: lbDraw 0.4s ease-out 1s forwards; }
+  .lb-label { font-size:10px; color:#A69E96; margin-top:6px; opacity:0; }
+  .login-bulb.animate .lb-label { animation: lbFadeIn 0.4s ease-out 0.7s forwards; }
+  @keyframes lbAppear { 0%{opacity:0;transform:scale(0.7) translateY(10px)} 60%{opacity:1;transform:scale(1.05) translateY(-2px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+  @keyframes lbDraw { to{stroke-dashoffset:0} }
+  @keyframes lbFilament { to{stroke-dashoffset:0;opacity:1} }
+  @keyframes lbGlowOn { to{opacity:1} }
+  @keyframes lbFadeIn { to{opacity:1} }
+  #loginFormArea.show { animation: lbFormAppear 0.8s ease-out forwards; }
+  @keyframes lbFormAppear { 0%{opacity:0;transform:translateY(15px)} 100%{opacity:1;transform:translateY(0)} }
+  h2, h3, h4 { color: #1A1816 !important; }
+  .text-txt-primary { color: #1A1816 !important; }
+  .text-txt-secondary { color: #4A4540 !important; }
+  .text-txt-muted { color: #7A746D !important; }
+  .text-txt-dim { color: #A69E96 !important; }
   .bg-card { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
   .bg-surface { border-bottom-color: #E5E7EB; }
-  thead .bg-surface, thead tr.bg-surface, .bg-surface\/50 { background: #EEF1F8 !important; }
+  thead .bg-surface, thead tr.bg-surface, .bg-surface\/50 { background: #F0EBE5 !important; }
   tbody tr:nth-child(even) { background: #FAFBFC; }
   .upload-zone { transition: border-color 0.2s; }
-  .upload-zone.dragover { border-color: #F26522; }
+  .upload-zone.dragover { border-color: #C96442; }
   .fade-in { animation: fadeIn 0.3s ease-out; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
   .page { display:none; } .page.active { display:flex; }
   ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: #F5F6FA; }
-  ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 2px; }
+  ::-webkit-scrollbar-track { background: #F5F1EB; }
+  ::-webkit-scrollbar-thumb { background: #D4CCC4; border-radius: 2px; }
 
   /* Calendar animations */
   .cal-cell { transition: all 0.2s cubic-bezier(.4,0,.2,1); position:relative; }
   .cal-cell:hover { transform: scale(1.08); z-index:5; }
-  .cal-cell.today { box-shadow: 0 0 0 2px #F26522, 0 0 20px rgba(242,101,34,0.15); }
-  .cal-cell.has-event::after { content:''; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:#2B4C7E; animation: dotPulse 2s infinite; }
+  .cal-cell.today { box-shadow: 0 0 0 2px #C96442, 0 0 20px rgba(201,100,66,0.15); }
+  .cal-cell.has-event::after { content:''; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:#6B5B4E; animation: dotPulse 2s infinite; }
   .cal-cell.has-multi::after { width:12px; border-radius:2px; height:3px; }
   @keyframes dotPulse { 0%,100%{opacity:1;transform:translateX(-50%) scale(1)} 50%{opacity:.5;transform:translateX(-50%) scale(1.5)} }
   .slide-left { animation: slideLeft 0.3s ease-out; }
@@ -67,33 +91,75 @@ tailwind.config = {
   .event-card:nth-child(1){animation-delay:0s} .event-card:nth-child(2){animation-delay:0.05s} .event-card:nth-child(3){animation-delay:0.1s} .event-card:nth-child(4){animation-delay:0.15s}
   @keyframes eventPop { from{opacity:0;transform:translateY(8px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
   .glow-ring { animation: glowRing 3s ease-in-out infinite; }
-  @keyframes glowRing { 0%,100%{box-shadow:0 0 0 0 rgba(242,101,34,0)} 50%{box-shadow:0 0 0 6px rgba(242,101,34,0.1)} }
+  @keyframes glowRing { 0%,100%{box-shadow:0 0 0 0 rgba(201,100,66,0)} 50%{box-shadow:0 0 0 6px rgba(201,100,66,0.1)} }
 </style>
 </head>
 <body class="text-txt-primary min-h-screen flex">
 
 <!-- 로그인 화면 -->
 <div id="loginScreen" class="fixed inset-0 z-50 bg-base flex items-center justify-center">
-  <div class="w-[340px] flex flex-col items-center gap-6">
-    <div class="flex items-center gap-2.5">
-      <i class="ph-duotone ph-briefcase text-3xl text-[#F26522]"></i>
-      <span class="text-2xl font-bold text-gold">김비서</span>
+  <!-- 색연필 텍스처 필터 -->
+  <svg style="position:absolute;width:0;height:0"><defs>
+    <filter id="pencil-texture"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+  </defs></svg>
+
+  <div class="w-[340px] flex flex-col items-center gap-8">
+    <!-- 전구 애니메이션 -->
+    <div id="loginBulbs" class="flex gap-6 items-center">
+      <div class="login-bulb" id="lbulb1" style="text-align:center">
+        <svg viewBox="0 0 56 56" width="48" height="48" style="filter:url(#pencil-texture)">
+          <circle class="lb-glow" cx="28" cy="22" r="20" fill="url(#lg1)" opacity="0"/>
+          <defs><radialGradient id="lg1" cx="50%" cy="40%" r="50%"><stop offset="0%" stop-color="#C96442" stop-opacity="0.15"/><stop offset="100%" stop-color="#C96442" stop-opacity="0"/></radialGradient></defs>
+          <path class="lb-body" d="M20 30 C20 16, 36 16, 36 30 L36 36 C36 38, 34 40, 32 40 L24 40 C22 40, 20 38, 20 36 Z"/>
+          <line class="lb-body" x1="22" y1="42" x2="34" y2="42"/><line class="lb-body" x1="23" y1="44" x2="33" y2="44"/><line class="lb-body" x1="25" y1="46" x2="31" y2="46"/>
+          <path class="lb-filament" d="M26 32 L26 24 C26 22, 30 22, 30 24 L30 32"/>
+        </svg>
+        <p class="lb-label">준비</p>
+      </div>
+      <div class="login-bulb" id="lbulb2" style="text-align:center">
+        <svg viewBox="0 0 56 56" width="48" height="48" style="filter:url(#pencil-texture)">
+          <circle class="lb-glow" cx="28" cy="22" r="22" fill="url(#lg2)" opacity="0"/>
+          <defs><radialGradient id="lg2" cx="50%" cy="40%" r="50%"><stop offset="0%" stop-color="#C96442" stop-opacity="0.2"/><stop offset="100%" stop-color="#C96442" stop-opacity="0"/></radialGradient></defs>
+          <path class="lb-body" d="M20 30 C20 16, 36 16, 36 30 L36 36 C36 38, 34 40, 32 40 L24 40 C22 40, 20 38, 20 36 Z"/>
+          <line class="lb-body" x1="22" y1="42" x2="34" y2="42"/><line class="lb-body" x1="23" y1="44" x2="33" y2="44"/><line class="lb-body" x1="25" y1="46" x2="31" y2="46"/>
+          <path class="lb-filament" d="M26 32 L26 24 C26 22, 30 22, 30 24 L30 32"/>
+        </svg>
+        <p class="lb-label">분석</p>
+      </div>
+      <div class="login-bulb" id="lbulb3" style="text-align:center">
+        <svg viewBox="0 0 56 56" width="48" height="48" style="filter:url(#pencil-texture)">
+          <circle class="lb-glow" cx="28" cy="22" r="26" fill="url(#lg3)" opacity="0"/>
+          <defs><radialGradient id="lg3" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFD4A8" stop-opacity="0.5"/><stop offset="40%" stop-color="#C96442" stop-opacity="0.2"/><stop offset="100%" stop-color="#C96442" stop-opacity="0"/></radialGradient></defs>
+          <g class="lb-rays"><line x1="28" y1="2" x2="28" y2="8"/><line x1="10" y1="10" x2="14" y2="14"/><line x1="46" y1="10" x2="42" y2="14"/><line x1="4" y1="24" x2="10" y2="24"/><line x1="52" y1="24" x2="46" y2="24"/><line x1="12" y1="36" x2="16" y2="33"/><line x1="44" y1="36" x2="40" y2="33"/></g>
+          <path class="lb-body" d="M20 30 C20 16, 36 16, 36 30 L36 36 C36 38, 34 40, 32 40 L24 40 C22 40, 20 38, 20 36 Z"/>
+          <line class="lb-body" x1="22" y1="42" x2="34" y2="42"/><line class="lb-body" x1="23" y1="44" x2="33" y2="44"/><line class="lb-body" x1="25" y1="46" x2="31" y2="46"/>
+          <path class="lb-filament" d="M25 33 L25 25 C25 21, 28 20, 28 24 C28 20, 31 21, 31 25 L31 33"/>
+        </svg>
+        <p class="lb-label">실행</p>
+      </div>
     </div>
-    <p class="text-xs text-txt-muted">비밀번호를 입력하세요</p>
-    <form id="loginForm" class="w-full flex flex-col gap-3" onsubmit="return handleLogin(event)">
-      <input type="password" id="pwInput" placeholder="Password" autocomplete="off"
-        class="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm font-mono text-txt-primary outline-none focus:border-gold/60 placeholder:text-txt-dim text-center tracking-widest shadow-md">
-      <p id="loginError" class="hidden text-xs text-red-400 text-center">비밀번호가 틀렸습니다</p>
-      <button type="submit" class="w-full bg-gold hover:bg-[#E05A1E] text-white font-semibold py-2.5 rounded-xl text-[13px] transition-colors shadow-md">로그인</button>
-    </form>
+
+    <!-- 로고 + 로그인 폼 -->
+    <div id="loginFormArea" class="w-full flex flex-col items-center gap-5" style="opacity:0;transform:translateY(15px)">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl font-bold text-gold">김비서</span>
+      </div>
+      <p class="text-xs text-txt-muted">비밀번호를 입력하세요</p>
+      <form id="loginForm" class="w-full flex flex-col gap-3" onsubmit="return handleLogin(event)">
+        <input type="password" id="pwInput" placeholder="Password" autocomplete="off"
+          class="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm font-mono text-txt-primary outline-none focus:border-gold/60 placeholder:text-txt-dim text-center tracking-widest shadow-md">
+        <p id="loginError" class="hidden text-xs text-red-400 text-center">비밀번호가 틀렸습니다</p>
+        <button type="submit" class="w-full bg-gold hover:bg-[#A8512F] text-white font-semibold py-2.5 rounded-xl text-[13px] transition-colors shadow-md">로그인</button>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- Sidebar -->
-<aside class="w-[220px] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-20 shrink-0" style="background:#1B2A4A;">
+<aside class="w-[220px] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-20 shrink-0" style="background:#2D2117;">
   <div class="px-6 pt-6 pb-5 flex items-center gap-2.5">
-    <i class="ph-duotone ph-briefcase text-xl text-[#F26522]"></i>
-    <span class="text-base font-bold" style="color:#F26522;">김비서</span>
+    <i class="ph-duotone ph-briefcase text-xl text-[#C96442]"></i>
+    <span class="text-base font-bold" style="color:#C96442;">김비서</span>
   </div>
   <nav class="flex-1 px-3">
     <p class="px-3 pb-2 text-[10px] font-semibold text-white/40 uppercase tracking-[2px]">MENU</p>
@@ -143,7 +209,7 @@ tailwind.config = {
   <div id="page-scheduler" class="page active flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-10">
       <div>
-        <h2 class="text-base font-semibold text-[#1E293B]">스케줄러</h2>
+        <h2 class="text-base font-semibold text-[#1A1816]">스케줄러</h2>
         <p class="text-xs text-txt-muted mt-0.5">Google Calendar 연동 · 일정 관리</p>
       </div>
       <div class="flex items-center gap-2">
@@ -229,13 +295,13 @@ tailwind.config = {
               <input type="time" id="calNewTime" class="w-[100px] bg-surface border border-border rounded-md px-3 py-2 text-xs outline-none focus:border-gold/40 text-txt-secondary [color-scheme:light]">
             </div>
             <select id="calNewColor" class="bg-surface border border-border rounded-md px-3 py-2 text-xs outline-none focus:border-gold/40 text-txt-secondary">
-              <option value="#2B4C7E">Navy (업무)</option>
-              <option value="#F26522">Orange (중요)</option>
+              <option value="#6B5B4E">Navy (업무)</option>
+              <option value="#C96442">Orange (중요)</option>
               <option value="#7C3AED">Purple (미팅)</option>
               <option value="#DC2626">Red (마감)</option>
               <option value="#34D399">Green (개인)</option>
             </select>
-            <button onclick="addLocalEvent()" class="w-full bg-gold hover:bg-[#E05A1E] text-white font-semibold py-2 rounded-md text-[12px] transition-colors">추가</button>
+            <button onclick="addLocalEvent()" class="w-full bg-gold hover:bg-[#A8512F] text-white font-semibold py-2 rounded-md text-[12px] transition-colors">추가</button>
           </div>
         </div>
 
@@ -252,7 +318,7 @@ tailwind.config = {
   <div id="page-clothing" class="page flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-10">
       <div>
-        <h2 class="text-base font-semibold text-[#1E293B]">피복비 대상자 선별</h2>
+        <h2 class="text-base font-semibold text-[#1A1816]">피복비 대상자 선별</h2>
         <p class="text-xs text-txt-muted mt-0.5">엑셀 파일 업로드 → 자동 컬럼 감지 → 5가지 기준 판정</p>
       </div>
       <div class="flex items-center gap-2">
@@ -389,7 +455,7 @@ tailwind.config = {
   <div id="page-dist-upload" class="page flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-10">
       <div>
-        <h2 class="text-base font-semibold text-[#1E293B]">파일 업로드</h2>
+        <h2 class="text-base font-semibold text-[#1A1816]">파일 업로드</h2>
         <p class="text-xs text-txt-muted mt-0.5">엑셀 파일 업로드 → 계열사 자동 매핑 → 분할 배포</p>
       </div>
       <div class="flex items-center gap-1.5 text-[11px] text-txt-dim">
@@ -451,7 +517,7 @@ tailwind.config = {
               </button>
             </div>
           </div>
-          <button id="distUploadBtn" onclick="distDoUpload()" disabled class="w-full bg-gold hover:bg-[#E05A1E] disabled:bg-gray-200 disabled:text-txt-dim disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-md text-[13px] transition-colors flex items-center justify-center gap-2">
+          <button id="distUploadBtn" onclick="distDoUpload()" disabled class="w-full bg-gold hover:bg-[#A8512F] disabled:bg-gray-200 disabled:text-txt-dim disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-md text-[13px] transition-colors flex items-center justify-center gap-2">
             <i class="ph-duotone ph-upload-simple text-base"></i>
             업로드 & 파싱
           </button>
@@ -481,7 +547,7 @@ tailwind.config = {
         <!-- 미리보기 버튼 -->
         <div class="flex justify-between mt-5">
           <button onclick="distGoStep(0)" class="bg-card border border-border hover:border-txt-dim text-txt-secondary text-[12px] font-medium py-2 px-5 rounded-md transition-colors">이전</button>
-          <button id="distPreviewBtn" onclick="distDoPreview()" class="bg-[#2B4C7E] hover:bg-[#1B3A5C] text-white font-semibold py-2 px-6 rounded-md text-[13px] transition-colors flex items-center gap-2">
+          <button id="distPreviewBtn" onclick="distDoPreview()" class="bg-[#6B5B4E] hover:bg-[#3D2E22] text-white font-semibold py-2 px-6 rounded-md text-[13px] transition-colors flex items-center gap-2">
             <i class="ph-duotone ph-eye text-base"></i>
             분할 미리보기
           </button>
@@ -491,7 +557,7 @@ tailwind.config = {
         <div id="distPreviewSection" class="hidden mt-6">
           <div class="bg-card rounded-lg overflow-hidden border border-border mb-4">
             <p class="text-[12px] font-semibold text-txt-primary px-4 py-2.5 bg-surface flex items-center gap-2">
-              <i class="ph-duotone ph-list-checks text-base text-[#2B4C7E]"></i>
+              <i class="ph-duotone ph-list-checks text-base text-[#6B5B4E]"></i>
               배포 미리보기
             </p>
             <table class="w-full text-[12px]">
@@ -506,7 +572,7 @@ tailwind.config = {
             </table>
           </div>
           <div class="bg-surface rounded-lg p-4 mb-4 flex items-center gap-3">
-            <i class="ph-duotone ph-info text-lg text-[#2B4C7E]"></i>
+            <i class="ph-duotone ph-info text-lg text-[#6B5B4E]"></i>
             <div>
               <p class="text-[12px] font-medium text-txt-primary" id="distPreviewSummary"></p>
               <p class="text-[11px] text-txt-muted mt-0.5">위 내용을 확인 후 배포를 실행해주세요.</p>
@@ -514,7 +580,7 @@ tailwind.config = {
           </div>
           <div class="flex justify-end gap-3">
             <button onclick="distHidePreview()" class="bg-card border border-border hover:border-txt-dim text-txt-secondary text-[12px] font-medium py-2 px-5 rounded-md transition-colors">매핑 수정</button>
-            <button id="distConfirmBtn" onclick="distDoConfirm()" class="bg-gold hover:bg-[#E05A1E] text-white font-semibold py-2 px-6 rounded-md text-[13px] transition-colors flex items-center gap-2">
+            <button id="distConfirmBtn" onclick="distDoConfirm()" class="bg-gold hover:bg-[#A8512F] text-white font-semibold py-2 px-6 rounded-md text-[13px] transition-colors flex items-center gap-2">
               <i class="ph-duotone ph-check-circle text-base"></i>
               배포 실행
             </button>
@@ -552,20 +618,20 @@ tailwind.config = {
           </table>
         </div>
         <div class="bg-card rounded-lg border border-border p-5 mb-5">
-          <p class="text-[13px] font-semibold text-[#1E293B] mb-3 flex items-center gap-2">
-            <i class="ph-duotone ph-file-doc text-base text-[#2B4C7E]"></i>
+          <p class="text-[13px] font-semibold text-[#1A1816] mb-3 flex items-center gap-2">
+            <i class="ph-duotone ph-file-doc text-base text-[#6B5B4E]"></i>
             품의서 자동 생성
           </p>
           <p class="text-[11px] text-txt-muted mb-3">업로드된 급여 데이터를 기반으로 품의서를 자동 작성합니다.</p>
           <div class="flex gap-3">
-            <button onclick="generateApprovalDoc()" class="bg-[#2B4C7E] hover:bg-[#1B3A5C] text-white font-semibold py-2 px-5 rounded-md text-[12px] flex items-center gap-2 transition-colors">
+            <button onclick="generateApprovalDoc()" class="bg-[#6B5B4E] hover:bg-[#3D2E22] text-white font-semibold py-2 px-5 rounded-md text-[12px] flex items-center gap-2 transition-colors">
               <i class="ph-duotone ph-file-doc text-sm"></i>
               급여 품의서 생성
             </button>
           </div>
         </div>
         <div class="text-center">
-          <button onclick="distReset()" class="bg-gold hover:bg-[#E05A1E] text-white font-semibold py-2.5 px-8 rounded-md text-[13px] transition-colors">새 배포하기</button>
+          <button onclick="distReset()" class="bg-gold hover:bg-[#A8512F] text-white font-semibold py-2.5 px-8 rounded-md text-[13px] transition-colors">새 배포하기</button>
         </div>
       </div>
     </div>
@@ -575,7 +641,7 @@ tailwind.config = {
   <div id="page-dist-documents" class="page flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-10">
       <div>
-        <h2 class="text-base font-semibold text-[#1E293B]">문서함</h2>
+        <h2 class="text-base font-semibold text-[#1A1816]">문서함</h2>
         <p class="text-xs text-txt-muted mt-0.5">배포된 문서 목록 · 다운로드</p>
       </div>
       <div class="flex items-center gap-2">
@@ -613,7 +679,7 @@ tailwind.config = {
   <!-- ====== PAGE: DIST-HISTORY (문서 배포 > 배포 이력) ====== -->
   <div id="page-dist-history" class="page flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 sticky top-0 z-10">
-      <h2 class="text-base font-semibold text-[#1E293B]">배포 이력</h2>
+      <h2 class="text-base font-semibold text-[#1A1816]">배포 이력</h2>
       <p class="text-xs text-txt-muted mt-0.5">전체 배포 현황 · 계열사별 상태 추적</p>
     </header>
     <div class="flex-1 p-8">
@@ -630,10 +696,10 @@ tailwind.config = {
   <div id="page-dist-users" class="page flex-col min-h-screen">
     <header class="bg-surface border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-10">
       <div>
-        <h2 class="text-base font-semibold text-[#1E293B]">계열사 담당자 관리</h2>
+        <h2 class="text-base font-semibold text-[#1A1816]">계열사 담당자 관리</h2>
         <p class="text-xs text-txt-muted mt-0.5">계열사별 담당자 등록 · 관리</p>
       </div>
-      <button onclick="usrOpenModal()" class="bg-gold hover:bg-[#E05A1E] text-white font-semibold py-1.5 px-4 rounded-md text-[12px] flex items-center gap-1.5 transition-colors">
+      <button onclick="usrOpenModal()" class="bg-gold hover:bg-[#A8512F] text-white font-semibold py-1.5 px-4 rounded-md text-[12px] flex items-center gap-1.5 transition-colors">
         <i class="ph-duotone ph-plus text-sm"></i>
         담당자 추가
       </button>
@@ -690,7 +756,7 @@ tailwind.config = {
       </div>
       <div class="flex justify-end gap-2 px-5 py-4 border-t border-border">
         <button onclick="usrCloseModal()" class="bg-surface border border-border text-txt-secondary text-[12px] font-medium py-2 px-4 rounded-md hover:border-txt-dim transition-colors">취소</button>
-        <button onclick="usrSave()" class="bg-gold hover:bg-[#E05A1E] text-white font-semibold py-2 px-5 rounded-md text-[12px] transition-colors">저장</button>
+        <button onclick="usrSave()" class="bg-gold hover:bg-[#A8512F] text-white font-semibold py-2 px-5 rounded-md text-[12px] transition-colors">저장</button>
       </div>
     </div>
   </div>
@@ -741,15 +807,15 @@ function navigateTo(page) {
     if (isSubNav) {
       a.className = `nav-link flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] transition-colors ${nav === page ? 'bg-white/15 text-white' : 'text-white/50 hover:bg-white/10 hover:text-white/80'}`;
       const icon = a.querySelector('i');
-      if (icon) icon.style.color = nav === page ? '#F26522' : '';
+      if (icon) icon.style.color = nav === page ? '#C96442' : '';
     } else if (nav === 'dist') {
       a.className = `nav-link flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors ${isDistParent ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/10'}`;
       const icon = a.querySelector('i:first-child');
-      if (icon) icon.style.color = isDistParent ? '#F26522' : '';
+      if (icon) icon.style.color = isDistParent ? '#C96442' : '';
     } else {
       a.className = `nav-link flex items-center gap-2.5 px-3 py-2.5 ${nav!=='scheduler'?'mt-1':''} rounded-md text-[13px] font-medium transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/10'}`;
       const icon = a.querySelector('i');
-      if (icon) icon.style.color = isActive ? '#F26522' : '';
+      if (icon) icon.style.color = isActive ? '#C96442' : '';
     }
   });
 
@@ -765,7 +831,7 @@ let localEvents = JSON.parse(localStorage.getItem('goldnote_events') || '[]');
 let calDirection = 'left';
 
 const WEEKDAYS_KO = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-const EVENT_COLORS = {'#2B4C7E':'업무','#F26522':'중요','#7C3AED':'미팅','#DC2626':'마감','#34D399':'개인'};
+const EVENT_COLORS = {'#6B5B4E':'업무','#C96442':'중요','#7C3AED':'미팅','#DC2626':'마감','#34D399':'개인'};
 
 function initCalendar() {
   const now = new Date();
@@ -1181,11 +1247,11 @@ async function createGCalEvent(title, date, time, colorId) {
 function mapGCalColor(colorId) {
   const map = { '1':'#7986CB', '2':'#33B679', '3':'#8E24AA', '4':'#E67C73', '5':'#F6BF26',
     '6':'#F4511E', '7':'#039BE5', '8':'#616161', '9':'#3F51B5', '10':'#0B8043', '11':'#D50000' };
-  return map[colorId] || '#2B4C7E';
+  return map[colorId] || '#6B5B4E';
 }
 
 function mapColorToGCal(hexColor) {
-  const map = { '#2B4C7E':'7', '#F26522':'5', '#7C3AED':'3', '#DC2626':'4', '#34D399':'2' };
+  const map = { '#6B5B4E':'7', '#C96442':'5', '#7C3AED':'3', '#DC2626':'4', '#34D399':'2' };
   return map[hexColor] || '7';
 }
 
@@ -1260,6 +1326,17 @@ async function sha256(msg) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
+function playLoginAnimation() {
+  const bulbs = [document.getElementById('lbulb1'), document.getElementById('lbulb2'), document.getElementById('lbulb3')];
+  const formArea = document.getElementById('loginFormArea');
+  bulbs.forEach(b => { if(b) { b.className = 'login-bulb'; void b.offsetWidth; } });
+  if (formArea) { formArea.className = 'w-full flex flex-col items-center gap-5'; formArea.style.opacity = '0'; formArea.style.transform = 'translateY(15px)'; }
+  setTimeout(() => { if(bulbs[0]) bulbs[0].classList.add('animate'); }, 300);
+  setTimeout(() => { if(bulbs[1]) bulbs[1].classList.add('animate'); }, 900);
+  setTimeout(() => { if(bulbs[2]) { bulbs[2].classList.add('animate','lit'); } }, 1500);
+  setTimeout(() => { if(formArea) { formArea.style.opacity=''; formArea.style.transform=''; formArea.classList.add('show'); } }, 2600);
+}
+
 async function handleLogin(e) {
   e.preventDefault();
   const pw = document.getElementById('pwInput').value;
@@ -1291,7 +1368,7 @@ let currentFilter = 'all';
 
 // 컬럼 감지 규칙 (실제 파일 구조 기반 최적화)
 const COL_SIGNATURES = {
-  master: { keywords:['고유사번','사번','이름','성명','그룹입사일','입사일','직원구분','고용유형','회사','회사구분','성장레벨','소속1','최종소속'], minMatch:4, label:'인사 명부', icon:'<i class="ph-duotone ph-user text-sm"></i>', color:'#2B4C7E' },
+  master: { keywords:['고유사번','사번','이름','성명','그룹입사일','입사일','직원구분','고용유형','회사','회사구분','성장레벨','소속1','최종소속'], minMatch:4, label:'인사 명부', icon:'<i class="ph-duotone ph-user text-sm"></i>', color:'#6B5B4E' },
   leave:  { keywords:['휴직시작일','휴직종료일','휴직시작','휴직종료','현구분','사유','휴직사유','휴직구분','총일수','경과일수','복직여부','복직처'], minMatch:2, label:'휴직자 정보', icon:'<i class="ph-duotone ph-first-aid text-sm"></i>', color:'#B45309' },
   resign: { keywords:['퇴사일','퇴사예정일','퇴사사유','퇴직일','퇴직예정일','계약종료일','만료일'], minMatch:1, label:'퇴사자 정보', icon:'<i class="ph-duotone ph-sign-out text-sm"></i>', color:'#D97706' },
 };
@@ -1331,6 +1408,8 @@ const EXTRA_DISPLAY = ['사번','본/지점','본지점','파견업체','회사'
     const waitGapi = setInterval(() => { if(typeof gapi!=='undefined'){clearInterval(waitGapi);gapiLoaded();} }, 100);
     const waitGis = setInterval(() => { if(typeof google!=='undefined'&&google.accounts){clearInterval(waitGis);gisLoaded();} }, 100);
   }
+  // 로그인 전구 애니메이션
+  playLoginAnimation();
 })();
 
 function updateCriteria() {
@@ -2321,11 +2400,11 @@ function distDoPreview() {
     document.getElementById('distPreviewBody').innerHTML = distSplitResults.map((s, i) =>
       `<tr class="hover:bg-gray-50 cursor-pointer" onclick="distToggleDetail(${i})">
         <td class="px-4 py-2 text-txt-muted text-center">${i+1}</td>
-        <td class="px-4 py-2"><span class="inline-block bg-[#2B4C7E]/10 text-[#2B4C7E] text-[11px] font-semibold px-2.5 py-0.5 rounded">${s.subsidiaryCode}</span></td>
+        <td class="px-4 py-2"><span class="inline-block bg-[#6B5B4E]/10 text-[#6B5B4E] text-[11px] font-semibold px-2.5 py-0.5 rounded">${s.subsidiaryCode}</span></td>
         <td class="px-4 py-2 text-txt-secondary">${s.fileName}</td>
         <td class="px-4 py-2 text-right font-mono text-txt-primary">${s.rowCount ? s.rowCount.toLocaleString()+'명' : '-'}</td>
         <td class="px-4 py-2 text-center">
-          <span class="inline-block bg-[#2B4C7E]/10 text-[#2B4C7E] text-[10px] px-2 py-0.5 rounded cursor-pointer hover:bg-[#2B4C7E]/20">
+          <span class="inline-block bg-[#6B5B4E]/10 text-[#6B5B4E] text-[10px] px-2 py-0.5 rounded cursor-pointer hover:bg-[#6B5B4E]/20">
             <i class="ph-duotone ph-caret-down text-xs"></i> 상세보기
           </span>
         </td>
@@ -2334,7 +2413,7 @@ function distDoPreview() {
         <td colspan="5" class="px-4 py-0">
           <div class="bg-surface rounded-lg my-2 overflow-hidden border border-border">
             <table class="w-full text-[11px]">
-              <thead><tr class="bg-[#EEF1F8] text-txt-muted text-left">
+              <thead><tr class="bg-[#F0EBE5] text-txt-muted text-left">
                 <th class="px-3 py-1.5 w-8">No</th><th class="px-3 py-1.5">사번</th><th class="px-3 py-1.5">성명</th><th class="px-3 py-1.5">법인</th>
               </tr></thead>
               <tbody id="distDetailBody_${i}" class="divide-y divide-border/30"></tbody>
@@ -2502,7 +2581,7 @@ function distRenderComplete() {
       <i class="ph-duotone ph-download-simple text-sm"></i>
       전체 다운로드 (${distSplitResults.length}개 파일)
     </button>
-    <button onclick="distResendEmails()" class="bg-[#2B4C7E]/10 hover:bg-[#2B4C7E]/20 text-[#2B4C7E] text-[12px] font-medium px-4 py-1.5 rounded transition-colors inline-flex items-center gap-1.5 ml-2">
+    <button onclick="distResendEmails()" class="bg-[#6B5B4E]/10 hover:bg-[#6B5B4E]/20 text-[#6B5B4E] text-[12px] font-medium px-4 py-1.5 rounded transition-colors inline-flex items-center gap-1.5 ml-2">
       <i class="ph-duotone ph-envelope text-sm"></i>
       메일 재발송
     </button>
